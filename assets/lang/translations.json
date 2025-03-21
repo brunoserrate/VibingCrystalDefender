@@ -1,0 +1,160 @@
+{
+  "en": {
+    "ui": {
+      "loading": "Loading...",
+      "touchInstructions": "Touch and drag on screen to look around",
+      "debugMode": "Debug",
+      "toggleMobile": "Toggle Mobile",
+      "debugInfo": "Debug Info",
+      "mode": "Mode",
+      "screen": "Screen",
+      "mobile": "Mobile",
+      "desktop": "Desktop"
+    },
+    "menu": {
+      "title": "Vibing Crystal Defender",
+      "subtitle": "Choose your Character",
+      "startButton": "Start Game",
+      "characterSelection": {
+        "warrior": {
+          "name": "Warrior",
+          "description": "High melee damage, greater resistance"
+        },
+        "archer": {
+          "name": "Archer",
+          "description": "Fast ranged attacks, high mobility"
+        },
+        "mage": {
+          "name": "Mage",
+          "description": "Powerful area magic attacks"
+        }
+      }
+    },
+    "gameplay": {
+      "crystal": {
+        "health": "Crystal Health"
+      },
+      "waves": {
+        "current": "Wave",
+        "next": "Next wave in",
+        "seconds": "seconds"
+      },
+      "resources": {
+        "crystals": "Crystals"
+      },
+      "gameOver": {
+        "title": "Game Over",
+        "score": "Score",
+        "wave": "Wave Reached",
+        "restart": "Play Again",
+        "menu": "Main Menu"
+      },
+      "towers": {
+        "balista": {
+          "name": "Balista",
+          "description": "Powerful single-target damage"
+        },
+        "magic": {
+          "name": "Magic Tower",
+          "description": "Moderate damage to multiple targets"
+        },
+        "ice": {
+          "name": "Ice Tower",
+          "description": "Slows enemies with cold blasts"
+        },
+        "fire": {
+          "name": "Fire Tower",
+          "description": "Area damage with fire explosions"
+        },
+        "build": "Build Tower",
+        "upgrade": "Upgrade Tower",
+        "cost": "Cost"
+      },
+      "enemies": {
+        "basic": "Basic Enemy",
+        "fast": "Fast Enemy",
+        "tank": "Tank Enemy",
+        "flying": "Flying Enemy"
+      }
+    }
+  },
+  "pt-br": {
+    "ui": {
+      "loading": "Carregando...",
+      "touchInstructions": "Toque e arraste na tela para olhar ao redor",
+      "debugMode": "Depuração",
+      "toggleMobile": "Alternar Móvel",
+      "debugInfo": "Informações de Depuração",
+      "mode": "Modo",
+      "screen": "Tela",
+      "mobile": "Móvel",
+      "desktop": "Desktop"
+    },
+    "menu": {
+      "title": "Vibing Crystal Defender",
+      "subtitle": "Escolha seu Personagem",
+      "startButton": "Iniciar Jogo",
+      "characterSelection": {
+        "warrior": {
+          "name": "Guerreiro",
+          "description": "Alto dano corpo a corpo, maior resistência"
+        },
+        "archer": {
+          "name": "Arqueiro",
+          "description": "Ataques rápidos à distância, alta mobilidade"
+        },
+        "mage": {
+          "name": "Mago",
+          "description": "Poderosos ataques mágicos em área"
+        }
+      }
+    },
+    "gameplay": {
+      "crystal": {
+        "health": "Vida do Cristal"
+      },
+      "waves": {
+        "current": "Onda",
+        "next": "Próxima onda em",
+        "seconds": "segundos"
+      },
+      "resources": {
+        "crystals": "Cristais"
+      },
+      "gameOver": {
+        "title": "Fim de Jogo",
+        "score": "Pontuação",
+        "wave": "Onda Alcançada",
+        "restart": "Jogar Novamente",
+        "menu": "Menu Principal"
+      },
+      "towers": {
+        "balista": {
+          "name": "Balista",
+          "description": "Dano poderoso em alvo único"
+        },
+        "magic": {
+          "name": "Torre Mágica",
+          "description": "Dano moderado em múltiplos alvos"
+        },
+        "ice": {
+          "name": "Torre de Gelo",
+          "description": "Desacelera inimigos com rajadas de frio"
+        },
+        "fire": {
+          "name": "Torre de Fogo",
+          "description": "Dano em área com explosões de fogo"
+        },
+        "build": "Construir Torre",
+        "upgrade": "Melhorar Torre",
+        "cost": "Custo"
+      },
+      "enemies": {
+        "basic": "Inimigo Básico",
+        "fast": "Inimigo Rápido",
+        "tank": "Inimigo Tanque",
+        "flying": "Inimigo Voador"
+      }
+    }
+  }
+}
