@@ -1,0 +1,24 @@
+# Desabilita a listagem de diretórios
+Options -Indexes
+
+# Redireciona tentativas de acesso a diretórios para a página principal
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^(.*)$ / [R=301,L]
+</IfModule>
+
+# Protege o arquivo .htaccess
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Nega acesso a arquivos ocultos e diretórios
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Força o carregamento do index.html quando um diretório é acessado
+DirectoryIndex index.html

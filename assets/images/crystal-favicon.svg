@@ -1,0 +1,14 @@
+<!-- filepath: d:\gamesproject\VibingCrystalDefender\assets\images\crystal-favicon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32">
+  <!-- Crystal base structure -->
+  <polygon points="50,10 65,30 80,45 65,75 50,90 35,75 20,45 35,30" fill="#9c89ff" stroke="#6247aa" stroke-width="2"/>
+  
+  <!-- Facets and highlights -->
+  <polygon points="50,10 65,30 50,50 35,30" fill="#c4b5fd" stroke="#6247aa" stroke-width="1"/>
+  <polygon points="65,30 80,45 65,75 50,50" fill="#8b5cf6" stroke="#6247aa" stroke-width="1"/>
+  <polygon points="50,50 65,75 50,90 35,75" fill="#7c3aed" stroke="#6247aa" stroke-width="1"/>
+  <polygon points="35,30 50,50 35,75 20,45" fill="#a78bfa" stroke="#6247aa" stroke-width="1"/>
+  
+  <!-- Central shine effect -->
+  <circle cx="50" cy="40" r="8" fill="#ffffff" opacity="0.6"/>
+</svg>
