@@ -1,6 +1,6 @@
 # Vibing Crystal Defender - Implementation Progress
 
-## Step 1: Development Environment Setup ✅
+## Step 1: Development Environment Setup 
 
 **Completed Tasks:**
 - Created basic project structure with index.html, CSS, and JavaScript files
@@ -20,7 +20,7 @@
 - No Node.js/NPM dependencies are required, as specified in the implementation plan
 - All testing can be done using a simple local server or by opening the HTML file directly
 
-## Step 2: Basic Map Rendering ✅
+## Step 2: Basic Map Rendering 
 
 **Completed Tasks:**
 - Set up a Three.js scene with sky background
@@ -41,7 +41,7 @@
 - Camera is positioned at eye-level (y=1.6) looking forward
 - The rendering loop is working correctly and the scene is visible
 
-## Step 3: Player Movement ✅
+## Step 3: Player Movement 
 
 **Completed Tasks:**
 - Added PointerLockControls for mouse-based camera rotation
@@ -63,7 +63,7 @@
 - Player cannot move outside the defined arena boundaries
 - Movement is handled in the updatePlayerMovement function during the animation loop
 
-## Step 3.1: Mobile Controls ✅
+## Step 3.1: Mobile Controls 
 
 **Completed Tasks:**
 - Added Nipple.js library for virtual joysticks
@@ -91,3 +91,50 @@
 - Added debug panel to monitor joystick values and toggle between mobile/desktop modes
 - Controls now automatically switch based on screen resize for better testing
 - Simplified camera rotation using Euler angles instead of quaternions for better performance
+
+## Step 4: Character Selection 
+
+**Completed Tasks:**
+- Created a character selection menu with options for three classes:
+  - Warrior (Guerreiro): High melee damage, more resistance
+  - Archer (Arqueiro): Fast ranged attacks, high mobility
+  - Mage (Mago): Powerful area magic attacks
+- Implemented character selection functionality with visual feedback
+- Added a start button that enables after character selection
+- Integrated character selection with game initialization
+- Player class is stored and will affect gameplay mechanics
+
+**Next Steps:**
+- Proceed to Step 5: Crystal Implementation
+- Create the central crystal that needs to be defended
+- Implement crystal health system
+- Add visual feedback for crystal status
+
+**Notes:**
+- Character selection happens before the 3D scene is rendered
+- Selected character is stored in the game class and will influence game mechanics
+- The menu is hidden once the game starts
+- UI elements are styled to match the game's aesthetic
+
+## Step 4.1: Translation System 
+
+**Completed Tasks:**
+- Created a translations.json file with support for Portuguese (pt-br) and English (en)
+- Implemented a LanguageManager class to handle translations
+- Added a language selector in the UI with PT/EN options
+- Updated all UI elements to use translation keys
+- Made the system extensible for future language additions
+- Implemented automatic translation of UI when language is changed
+- Added character class name translation between languages
+
+**Next Steps:**
+- Proceed to Step 5: Crystal Implementation
+- Continue with the main gameplay features
+
+**Notes:**
+- Default language is set to Portuguese (pt-br)
+- Translations are organized in a structured JSON format by categories (menu, UI, gameplay)
+- UI elements use data-i18n attributes to reference translation keys
+- Language selection is persisted during gameplay
+- System includes mapping for character class names between languages
+- All user-facing text now comes from the translation system for easier localization
