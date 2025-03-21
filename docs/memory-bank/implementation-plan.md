@@ -49,6 +49,21 @@ Este plano foi ajustado considerando as limitações de ambiente (hospedagem com
 
 ---
 
+## Etapa 3.1: Movimentação mobile
+
+### Instrução:
+* Adicione áreas de controle touch na tela, uma para movimentação e outra para mira, usando uma biblioteca de joysticks virtuais compatível com navegadores (como Nipple.js via CDN).
+* Configure o joystick esquerdo para controlar o movimento do jogador (frente, trás, esquerda, direita), ajustando sua posição no plano XZ.
+* Configure o joystick direito para controlar a rotação da câmera, permitindo mirar em todas as direções (horizontal e vertical).
+* Defina limites para a arena (ex.: -50 a 50 em x e z) para evitar que o jogador saia da área jogável.
+
+### Teste:
+* Em um dispositivo móvel ou emulador, toque e arraste o joystick esquerdo para confirmar que o jogador se move suavemente nas direções correspondentes.
+* Toque e arraste o joystick direito para verificar se a câmera rotaciona corretamente, permitindo mirar em 360°.
+* Tente mover o jogador além dos limites da arena e confirme que o movimento é bloqueado, mantendo-o dentro da área definida.
+
+---
+
 ## Etapa 4: Seleção de Personagem
 
 ### Instrução:
