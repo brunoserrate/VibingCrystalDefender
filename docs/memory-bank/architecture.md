@@ -28,17 +28,18 @@ As specified in the Tech Stack document:
 
 ## Component Architecture
 
-The game will follow this high-level component structure:
+The game follows this high-level component structure:
 
-1. **Game Manager** (`game.js`)
+1. **Game Manager** (`game.js` - VibingCrystalDefender class)
    - Initializes the game environment
    - Manages game states (menu, playing, game over)
    - Orchestrates other components
 
-2. **Renderer Component** (To be implemented)
-   - Will handle Three.js scene setup
+2. **Renderer Component** (Implemented in `game.js`)
+   - Handles Three.js scene setup
    - Camera configuration
-   - Rendering loop
+   - Rendering loop with requestAnimationFrame
+   - Responsive design with window resize handling
 
 3. **Player Component** (To be implemented)
    - Will manage player movement
