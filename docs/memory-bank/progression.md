@@ -40,3 +40,54 @@
 - The scene is very basic with just a green floor and blue sky
 - Camera is positioned at eye-level (y=1.6) looking forward
 - The rendering loop is working correctly and the scene is visible
+
+## Step 3: Player Movement ✅
+
+**Completed Tasks:**
+- Added PointerLockControls for mouse-based camera rotation
+- Implemented WASD and arrow key controls for player movement
+- Added arena boundaries (-50 to 50 on x and z axes)
+- Created player velocity and movement system
+- Added crosshair cursor for aiming
+- Set up event listeners for keyboard and mouse interaction
+
+**Next Steps:**
+- Proceed to Step 3.1: Mobile Controls
+- Implement touch joystick controls for movement on mobile devices
+- Add mobile device detection
+- Create touch-friendly interface elements
+
+**Notes:**
+- Movement is locked to the XZ plane (no jumping/flying)
+- Clicking the game window locks the mouse pointer for camera control
+- Player cannot move outside the defined arena boundaries
+- Movement is handled in the updatePlayerMovement function during the animation loop
+
+## Step 3.1: Mobile Controls ✅
+
+**Completed Tasks:**
+- Added Nipple.js library for virtual joysticks
+- Implemented mobile device detection
+- Created left joystick interface for movement
+- Implemented direct touch control for camera rotation
+- Made controls responsive for different screen orientations
+- Updated movement system to work with both keyboard and joystick input
+- Added debug tools for mobile controls testing
+- Implemented automatic and manual control switching based on screen size
+- Simplified camera rotation using direct touch input instead of second joystick
+
+**Next Steps:**
+- Proceed to Step 4: Character Selection
+- Create a menu HTML for class selection
+- Implement class-specific properties
+- Add a start button to begin gameplay
+
+**Notes:**
+- Mobile controls automatically activate when the game detects a mobile device or touch screen
+- Left joystick controls player movement relative to current camera orientation
+- Direct touch on screen controls camera rotation (looking around)
+- Mobile UI is designed to be usable in both portrait and landscape orientations
+- Movement boundaries are the same as desktop controls (-50 to 50 on x and z axes)
+- Added debug panel to monitor joystick values and toggle between mobile/desktop modes
+- Controls now automatically switch based on screen resize for better testing
+- Simplified camera rotation using Euler angles instead of quaternions for better performance

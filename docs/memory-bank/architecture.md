@@ -26,6 +26,10 @@ As specified in the Tech Stack document:
    - No additional frameworks to keep the project lightweight
    - Organized in a class-based structure for maintainability
 
+3. **Nipple.js** - For virtual joystick
+   - Loaded via CDN: `https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.8.6/nipplejs.min.js`
+   - Will be used for handling touch controls on mobile devices
+
 ## Component Architecture
 
 The game follows this high-level component structure:
@@ -41,10 +45,10 @@ The game follows this high-level component structure:
    - Rendering loop with requestAnimationFrame
    - Responsive design with window resize handling
 
-3. **Player Component** (To be implemented)
-   - Will manage player movement
-   - Handle player inputs
-   - Process player actions
+3. **Player Component** (Implemented in `game.js`)
+   - Manages player movement
+   - Handles player inputs
+   - Processes player actions
 
 4. **Enemy System** (To be implemented)
    - Will handle enemy spawning
