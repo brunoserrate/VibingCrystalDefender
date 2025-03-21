@@ -535,31 +535,29 @@ class VibingCrystalDefender {
 
     updateMobileMovement() {
         // Skip if no input from joystick
-        if (this.joystickMovement.x === 0 && this.joystickMovement.y === 0) {
+        if (Math.abs(this.joystickMovement.x) < this.joystickDeadZone && 
+            Math.abs(this.joystickMovement.y) < this.joystickDeadZone) {
             return;
         }
 
         // Get camera direction for movement relative to camera orientation
-        const direction = new THREE.Vector3();
-        this.camera.getWorldDirection(direction);
-        direction.y = 0; // Keep movement in the xz plane
-        direction.normalize();
+        const cameraDirection = new THREE.Vector3();
+        this.camera.getWorldDirection(cameraDirection);
+        cameraDirection.y = 0; // Keep movement in the xz plane
+        cameraDirection.normalize();
 
         // Get the right vector (perpendicular to direction)
-        const rightVector = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0)).normalize();
+        const rightVector = new THREE.Vector3().crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
 
-        // Apply left joystick movement (forward/backward/left/right)
-        // First calculate forward/backward component
-        // Note: Y is inverted - pushing up should move forward
-        const forwardMovement = -this.joystickMovement.y; // Negate to match expected direction
-        if (forwardMovement !== 0) {
-            this.playerVelocity.add(direction.clone().multiplyScalar(forwardMovement * this.playerSpeed));
-        }
+        // Calculate movement vectors based on joystick input
+        // Note: For joystick, up = negative Y and down = positive Y
+        const forwardVector = cameraDirection.clone().multiplyScalar(this.joystickMovement.y * this.playerSpeed);
+        const rightwardVector = rightVector.clone().multiplyScalar(this.joystickMovement.x * this.playerSpeed);
 
-        // Then calculate left/right component
-        if (this.joystickMovement.x !== 0) {
-            this.playerVelocity.add(rightVector.clone().multiplyScalar(this.joystickMovement.x * this.playerSpeed));
-        }
+        // Combine movements
+        this.playerVelocity.set(0, 0, 0); // Reset velocity first
+        this.playerVelocity.add(forwardVector); // Add forward/backward movement
+        this.playerVelocity.add(rightwardVector); // Add left/right movement
 
         // Apply movement to camera position
         this.camera.position.add(this.playerVelocity);
@@ -567,9 +565,6 @@ class VibingCrystalDefender {
         // Apply arena boundaries
         this.camera.position.x = Math.max(-this.arenaBoundary, Math.min(this.arenaBoundary, this.camera.position.x));
         this.camera.position.z = Math.max(-this.arenaBoundary, Math.min(this.arenaBoundary, this.camera.position.z));
-
-        // Reset velocity (no physics/inertia for now)
-        this.playerVelocity.set(0, 0, 0);
     }
 
     createFloor() {
@@ -594,7 +589,18 @@ class VibingCrystalDefender {
         // Add to the scene
         this.scene.add(floor);
 
-        console.log("Floor created and added to scene");
+        // Add a grid helper for better sense of scale and space
+        const gridSize = 100; // Size of the grid (matches floor size)
+        const gridDivisions = 20; // Number of divisions (5-meter grid cells)
+        const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x000000, 0x444444);
+        
+        // Position the grid at ground level (y=0)
+        gridHelper.position.y = 0.01; // Slightly above floor to prevent z-fighting
+        
+        // Add the grid to the scene
+        this.scene.add(gridHelper);
+
+        console.log("Floor and grid created and added to scene");
     }
 
     handleResize() {
