@@ -28,15 +28,25 @@ class VibingCrystalDefender {
         this.isMobile = false;
         this.forceMobile = false; // Flag to force mobile mode for debugging
         this.leftJoystick = null;
+        this.rightJoystick = null;
+        this.leftJoystickManager = null;
+        this.rightJoystickManager = null;
         this.touchStartX = 0;
         this.touchStartY = 0;
         this.joystickMovement = { x: 0, y: 0 };  // For tracking movement joystick
         this.touchingSurface = false;             // Flag to track if user is touching the screen
-        this.mobileTouchSensitivity = 0.1;        // Sensitivity for touch-based rotation
+        this.mobileTouchSensitivity = 0.05;       // Reduced sensitivity for smoother camera rotation
         this.joystickDeadZone = 0.15;             // Dead zone for joysticks (ignores small movements)
+        
+        // Camera smoothing properties
+        this.targetCameraRotation = { x: 0, y: 0 };
+        this.smoothingFactor = 0.1;              // Lower = smoother but slower camera movement
 
         // Debug info
-        this.debugMode = false;
+        this.debugMode = true;  // Set default to true to enable debugging
+        this.errorLogEnabled = true;  // Enable error logging
+        this.errorLog = [];  // Store error messages
+        this.maxErrorLogSize = 10;  // Maximum number of error messages to show
         this.debugInfo = {
             deviceType: "",
             screenWidth: window.innerWidth,
@@ -207,9 +217,16 @@ class VibingCrystalDefender {
 
     cleanupControls() {
         // Clean up mobile joysticks if they exist
-        if (this.leftJoystick) {
-            this.leftJoystick.destroy();
+        if (this.leftJoystickManager) {
+            this.leftJoystickManager.destroy();
+            this.leftJoystickManager = null;
             this.leftJoystick = null;
+        }
+        
+        if (this.rightJoystickManager) {
+            this.rightJoystickManager.destroy();
+            this.rightJoystickManager = null;
+            this.rightJoystick = null;
         }
 
         // Reset joystick movement data
@@ -235,6 +252,12 @@ class VibingCrystalDefender {
         // Position the camera at the center of the arena, standing height
         this.camera.position.set(0, 1.6, 0); // x=0, y=1.6 (eye level), z=0
         this.camera.lookAt(new THREE.Vector3(0, 1.6, -1)); // Looking forward
+        
+        // Initialize camera rotation target values
+        this.targetCameraRotation = { 
+            x: this.camera.rotation.x, 
+            y: this.camera.rotation.y 
+        };
 
         console.log("Camera created at position", this.camera.position);
     }
@@ -275,26 +298,48 @@ class VibingCrystalDefender {
     }
 
     setupMobileControls() {
-        console.log("Setting up mobile controls with touch and joystick");
+        console.log("Setting up mobile controls with dual joysticks");
 
-        // Show only the left joystick zone
+        // Show both joystick zones
         document.getElementById('joystick-left').style.display = 'block';
-        // Hide the right joystick as we'll use direct touch for camera control
-        document.getElementById('joystick-right').style.display = 'none';
+        document.getElementById('joystick-right').style.display = 'block';
 
-        // Create left joystick for movement
-        this.leftJoystick = nipplejs.create({
+        // Define specific options for each joystick
+        const leftJoystickOptions = {
             zone: document.getElementById('joystick-left'),
             mode: 'static',
             position: { left: '50%', top: '50%' },
             color: 'white',
             size: 100,
-            lockX: false,
-            lockY: false
-        });
+            multitouch: true,
+            maxNumberOfNipples: 2,
+            dataOnly: false
+        };
 
-        // Add event listeners for left joystick (movement)
-        this.leftJoystick.on('move', (event, data) => {
+        const rightJoystickOptions = {
+            zone: document.getElementById('joystick-right'),
+            mode: 'static',
+            position: { left: '50%', top: '50%' },
+            color: 'white',
+            size: 100,
+            multitouch: true,
+            maxNumberOfNipples: 2,
+            dataOnly: false
+        };
+
+        // Create the joysticks with their specific managers
+        this.leftJoystickManager = nipplejs.create(leftJoystickOptions);
+        this.rightJoystickManager = nipplejs.create(rightJoystickOptions);
+
+        // Reference the first nipple in each manager
+        this.leftJoystick = this.leftJoystickManager[0];
+        this.rightJoystick = this.rightJoystickManager[0];
+
+        // Add event listeners for left joystick manager (movement)
+        this.leftJoystickManager.on('move', (event, data) => {
+            // Ensure we only process events from the left joystick
+            if (data.identifier !== this.leftJoystick.identifier) return;
+            
             const angle = data.angle.radian;
             const force = Math.min(data.force, 1); // Limit force to 1
 
@@ -313,7 +358,10 @@ class VibingCrystalDefender {
             this.updateDebugInfo();
         });
 
-        this.leftJoystick.on('end', () => {
+        this.leftJoystickManager.on('end', (event, data) => {
+            // Ensure we only process events from the left joystick
+            if (data.identifier !== this.leftJoystick.identifier) return;
+            
             // Reset movement when joystick is released
             this.joystickMovement.x = 0;
             this.joystickMovement.y = 0;
@@ -323,104 +371,65 @@ class VibingCrystalDefender {
             this.updateDebugInfo();
         });
 
-        // Setup touch events for camera control
-        this.setupTouchCameraControls();
-
-        console.log("Mobile controls initialized with touch camera");
-    }
-
-    setupTouchCameraControls() {
-        // Adicionar eventos de toque na área de renderização (exceto na área do joystick)
-        const gameContainer = document.getElementById('game-container');
-        const joystickLeft = document.getElementById('joystick-left');
-
-        // Manipuladores de eventos de toque para rotação da câmera
-        gameContainer.addEventListener('touchstart', (event) => {
-            // Verifica se o toque não está sobre o joystick esquerdo
-            let touchOnJoystick = false;
-            const touch = event.touches[0];
-            const joystickRect = joystickLeft.getBoundingClientRect();
-
-            if (touch.clientX >= joystickRect.left && touch.clientX <= joystickRect.right &&
-                touch.clientY >= joystickRect.top && touch.clientY <= joystickRect.bottom) {
-                touchOnJoystick = true;
-            }
-
-            if (!touchOnJoystick) {
-                this.touchStartX = touch.clientX;
-                this.touchStartY = touch.clientY;
-                this.touchingSurface = true;
-
-                // Atualizar debug info
-                this.debugInfo.rightJoystickActive = true;
-                this.updateDebugInfo();
-
-                // Prevenir comportamento padrão para evitar deslizamento da página
-                event.preventDefault();
-            }
+        // Add event listeners for right joystick manager (camera rotation)
+        this.rightJoystickManager.on('move', (event, data) => {
+            // Ensure we only process events from the right joystick
+            if (data.identifier !== this.rightJoystick.identifier) return;
+            
+            const angle = data.angle.radian;
+            const force = Math.min(data.force, 1); // Limit force to 1
+            
+            // Calculate rotation values based on joystick position
+            // X-axis controls horizontal rotation (yaw)
+            // Y-axis controls vertical rotation (pitch)
+            const deltaX = Math.cos(angle) * force * 2; // Horizontal rotation
+            const deltaY = Math.sin(angle) * force * 2; // Vertical rotation
+            
+            // Apply rotation
+            this.rotateCamera(deltaX, deltaY);
+            
+            // Update debug info
+            this.debugInfo.rightJoystickActive = true;
+            this.debugInfo.rightJoystickValues = {
+                x: deltaX,
+                y: deltaY,
+                angle: angle,
+                force: force
+            };
+            this.updateDebugInfo();
         });
 
-        gameContainer.addEventListener('touchmove', (event) => {
-            if (this.touchingSurface) {
-                const touch = event.touches[0];
-                const deltaX = touch.clientX - this.touchStartX;
-                const deltaY = touch.clientY - this.touchStartY;
-
-                // Rotacionar a câmera baseado na diferença do toque
-                this.rotateCamera(deltaX, deltaY);
-
-                // Atualizar posição inicial para o próximo movimento
-                this.touchStartX = touch.clientX;
-                this.touchStartY = touch.clientY;
-
-                // Atualizar debug info
-                this.debugInfo.rightJoystickValues = {
-                    x: deltaX * this.mobileTouchSensitivity,
-                    y: deltaY * this.mobileTouchSensitivity,
-                    angle: 0,
-                    force: Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 100
-                };
-                this.updateDebugInfo();
-
-                // Prevenir comportamento padrão
-                event.preventDefault();
-            }
-        });
-
-        gameContainer.addEventListener('touchend', () => {
-            this.touchingSurface = false;
-
-            // Atualizar debug info
+        this.rightJoystickManager.on('end', (event, data) => {
+            // Ensure we only process events from the right joystick
+            if (data.identifier !== this.rightJoystick.identifier) return;
+            
+            // Update debug info
             this.debugInfo.rightJoystickActive = false;
             this.updateDebugInfo();
         });
 
-        gameContainer.addEventListener('touchcancel', () => {
-            this.touchingSurface = false;
-
-            // Atualizar debug info
-            this.debugInfo.rightJoystickActive = false;
-            this.updateDebugInfo();
-        });
-
-        console.log("Touch camera controls initialized");
+        console.log("Dual joystick mobile controls initialized with multitouch support");
     }
 
     rotateCamera(deltaX, deltaY) {
-        // Aplicar rotação horizontal (eixo Y) baseado no movimento do dedo no eixo X
-        if (deltaX !== 0) {
-            // Use rotation matrix for simplicity instead of quaternions
-            // Negative deltaX because moving finger right should rotate camera right
-            this.camera.rotation.y -= deltaX * this.mobileTouchSensitivity;
-        }
+        // 1. Definir ordem de rotação para FPS (crucial!)
+        this.camera.rotation.order = 'YXZ'; // Yaw (Y) primeiro, depois Pitch (X)
 
-        // Aplicar rotação vertical (eixo X) baseado no movimento do dedo no eixo Y
-        if (deltaY !== 0) {
-            // Limitar a rotação vertical entre -85 e 85 graus (em radianos)
-            const maxVerticalAngle = 85 * (Math.PI / 180);
-            const newRotationX = this.camera.rotation.x - (deltaY * this.mobileTouchSensitivity);
-            this.camera.rotation.x = Math.max(-maxVerticalAngle, Math.min(maxVerticalAngle, newRotationX));
-        }
+        // 2. Definir a rotação alvo com base nos inputs
+        this.targetCameraRotation.y -= deltaX * this.mobileTouchSensitivity;
+        this.targetCameraRotation.x += deltaY * this.mobileTouchSensitivity;
+
+        // 3. Limitar ângulo vertical alvo (85 graus convertidos para radianos)
+        const maxPitch = THREE.MathUtils.degToRad(85);
+        this.targetCameraRotation.x = THREE.MathUtils.clamp(
+            this.targetCameraRotation.x, 
+            -maxPitch, 
+            maxPitch
+        );
+
+        // 4. Suavizar a transição para a rotação alvo
+        this.camera.rotation.y += (this.targetCameraRotation.y - this.camera.rotation.y) * this.smoothingFactor;
+        this.camera.rotation.x += (this.targetCameraRotation.x - this.camera.rotation.x) * this.smoothingFactor;
     }
 
     setupEventListeners() {
@@ -526,31 +535,29 @@ class VibingCrystalDefender {
 
     updateMobileMovement() {
         // Skip if no input from joystick
-        if (this.joystickMovement.x === 0 && this.joystickMovement.y === 0) {
+        if (Math.abs(this.joystickMovement.x) < this.joystickDeadZone && 
+            Math.abs(this.joystickMovement.y) < this.joystickDeadZone) {
             return;
         }
 
         // Get camera direction for movement relative to camera orientation
-        const direction = new THREE.Vector3();
-        this.camera.getWorldDirection(direction);
-        direction.y = 0; // Keep movement in the xz plane
-        direction.normalize();
+        const cameraDirection = new THREE.Vector3();
+        this.camera.getWorldDirection(cameraDirection);
+        cameraDirection.y = 0; // Keep movement in the xz plane
+        cameraDirection.normalize();
 
         // Get the right vector (perpendicular to direction)
-        const rightVector = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0)).normalize();
+        const rightVector = new THREE.Vector3().crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
 
-        // Apply left joystick movement (forward/backward/left/right)
-        // First calculate forward/backward component
-        // Note: Y is inverted - pushing up should move forward
-        const forwardMovement = -this.joystickMovement.y; // Negate to match expected direction
-        if (forwardMovement !== 0) {
-            this.playerVelocity.add(direction.clone().multiplyScalar(forwardMovement * this.playerSpeed));
-        }
+        // Calculate movement vectors based on joystick input
+        // Note: For joystick, up = negative Y and down = positive Y
+        const forwardVector = cameraDirection.clone().multiplyScalar(this.joystickMovement.y * this.playerSpeed);
+        const rightwardVector = rightVector.clone().multiplyScalar(this.joystickMovement.x * this.playerSpeed);
 
-        // Then calculate left/right component
-        if (this.joystickMovement.x !== 0) {
-            this.playerVelocity.add(rightVector.clone().multiplyScalar(this.joystickMovement.x * this.playerSpeed));
-        }
+        // Combine movements
+        this.playerVelocity.set(0, 0, 0); // Reset velocity first
+        this.playerVelocity.add(forwardVector); // Add forward/backward movement
+        this.playerVelocity.add(rightwardVector); // Add left/right movement
 
         // Apply movement to camera position
         this.camera.position.add(this.playerVelocity);
@@ -558,9 +565,6 @@ class VibingCrystalDefender {
         // Apply arena boundaries
         this.camera.position.x = Math.max(-this.arenaBoundary, Math.min(this.arenaBoundary, this.camera.position.x));
         this.camera.position.z = Math.max(-this.arenaBoundary, Math.min(this.arenaBoundary, this.camera.position.z));
-
-        // Reset velocity (no physics/inertia for now)
-        this.playerVelocity.set(0, 0, 0);
     }
 
     createFloor() {
@@ -585,7 +589,18 @@ class VibingCrystalDefender {
         // Add to the scene
         this.scene.add(floor);
 
-        console.log("Floor created and added to scene");
+        // Add a grid helper for better sense of scale and space
+        const gridSize = 100; // Size of the grid (matches floor size)
+        const gridDivisions = 20; // Number of divisions (5-meter grid cells)
+        const gridHelper = new THREE.GridHelper(gridSize, gridDivisions, 0x000000, 0x444444);
+        
+        // Position the grid at ground level (y=0)
+        gridHelper.position.y = 0.01; // Slightly above floor to prevent z-fighting
+        
+        // Add the grid to the scene
+        this.scene.add(gridHelper);
+
+        console.log("Floor and grid created and added to scene");
     }
 
     handleResize() {
