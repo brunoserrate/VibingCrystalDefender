@@ -91,6 +91,47 @@ export class EnemyManager {
         return enemy;
     }
     
+    /**
+     * Spawn an enemy from a specific direction
+     * @param {string} direction - The direction to spawn from ('north', 'south', 'east', 'west')
+     * @returns {THREE.Mesh|null} - The spawned enemy or null if no enemy could be spawned
+     */
+    spawnEnemyFromDirection(direction) {
+        // Get an inactive enemy from the pool
+        const enemy = this.getInactiveEnemy();
+        
+        if (!enemy) {
+            debugLog("No inactive enemies available in the pool");
+            return null;
+        }
+        
+        // Validate direction
+        if (!this.spawnPoints[direction]) {
+            direction = 'north'; // Default to north if invalid direction
+        }
+        
+        // Get spawn position for the specified direction
+        const position = this.spawnPoints[direction];
+        
+        // Position the enemy at the spawn point
+        enemy.position.set(position.x, position.y, position.z);
+        
+        // Activate the enemy
+        enemy.userData.isActive = true;
+        enemy.userData.isAttackingCrystal = false;
+        enemy.userData.lastAttackTime = 0;
+        enemy.visible = true;
+        
+        // Reset enemy health
+        enemy.userData.health = settings.enemies.health;
+        
+        // Add to active enemies list
+        this.activeEnemies.push(enemy);
+        
+        debugLog(`Enemy spawned from ${direction} (${position.x}, ${position.y}, ${position.z})`);
+        return enemy;
+    }
+    
     getInactiveEnemy() {
         // Find an inactive enemy in the pool
         return this.enemyPool.find(enemy => !enemy.userData.isActive);
