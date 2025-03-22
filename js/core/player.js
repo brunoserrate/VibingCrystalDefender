@@ -23,6 +23,13 @@ export class Player {
         this.moveLeft = false;
         this.moveRight = false;
         
+        // Attack properties
+        this.canAttack = true;
+        this.attackCooldown = 1000; // 1 second default cooldown
+        this.lastAttackTime = 0;
+        this.attackDirection = new THREE.Vector3();
+        this.projectileManager = null; // Will be set from game.js
+        
         // Mobile properties
         this.isMobile = false;
         this.forceMobile = false;
@@ -76,21 +83,42 @@ export class Player {
             case 'Warrior':
             case 'Guerreiro':
                 // Warrior properties (high strength, lower speed)
+                this.attackCooldown = 1200; // Slower but powerful melee attack
                 console.log("Warrior class properties applied");
                 break;
             case 'Archer':
             case 'Arqueiro':
                 // Archer properties (high range, higher speed)
+                this.attackCooldown = 800; // Fast arrows
                 console.log("Archer class properties applied");
                 break;
             case 'Mage':
             case 'Mago':
                 // Mage properties (high magic power)
+                this.attackCooldown = 1500; // Slow but powerful magic attacks
                 console.log("Mage class properties applied");
                 break;
             default:
                 console.warn(`Unknown player class: ${className}`);
         }
+    }
+    
+    // Method to set the projectile manager reference
+    setProjectileManager(projectileManager) {
+        this.projectileManager = projectileManager;
+        console.log("ProjectileManager set in Player class");
+    }
+    
+    // Method to get a callback for getting active enemies
+    setActiveEnemiesCallback(callback) {
+        this.getActiveEnemies = callback;
+    }
+    
+    // Default implementation of getActiveEnemies
+    getActiveEnemies() {
+        // This will be replaced by a callback from game.js
+        console.log("getActiveEnemies called - should be implemented by game.js");
+        return [];
     }
     
     setupControls() {
@@ -113,6 +141,15 @@ export class Player {
         // Keyboard events
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
+        
+        // Mouse click for attacks (desktop)
+        document.addEventListener('mousedown', this.onMouseDown.bind(this));
+        
+        // Touch attack button event (mobile)
+        const attackButton = document.getElementById('attack-button');
+        if (attackButton) {
+            attackButton.addEventListener('touchstart', this.onAttackButtonPressed.bind(this));
+        }
         
         // Language change event
         document.addEventListener('languageChanged', () => {
@@ -165,6 +202,9 @@ export class Player {
             case 'KeyD':
                 this.moveRight = true;
                 break;
+            case 'Space':
+                this.attack();
+                break;
         }
     }
     
@@ -192,6 +232,97 @@ export class Player {
         }
     }
     
+    // Mouse click handler for attacks
+    onMouseDown(event) {
+        // Only left mouse button (0) triggers attack
+        if (event.button === 0 && this.controls.isLocked) {
+            this.attack();
+        }
+    }
+    
+    // Mobile attack button handler
+    onAttackButtonPressed(event) {
+        event.preventDefault();
+        if (this.isMobile) {
+            this.attack();
+        }
+    }
+    
+    // Player attack method
+    attack() {
+        const currentTime = Date.now();
+        
+        // Check if attack is off cooldown
+        if (!this.canAttack || currentTime - this.lastAttackTime < this.attackCooldown) {
+            return;
+        }
+        
+        // Set cooldown
+        this.canAttack = false;
+        this.lastAttackTime = currentTime;
+        
+        // Get camera direction for projectile
+        this.camera.getWorldDirection(this.attackDirection);
+        
+        // Get camera position
+        const position = this.controls.getObject().position.clone();
+        // Adjust position to be slightly in front of camera (and at eye level)
+        position.add(this.attackDirection.clone().multiplyScalar(1.0));
+        
+        // Execute attack based on player class
+        if (this.projectileManager) {
+            let attackResult = null;
+            
+            switch (this.playerClass) {
+                case 'Warrior':
+                case 'Guerreiro':
+                    // Melee attack - radius check in front of player
+                    attackResult = this.projectileManager.meleeAttack(
+                        position, 
+                        this.attackDirection, 
+                        3.0, // 3 unit radius for melee attack
+                        this.getActiveEnemies()
+                    );
+                    console.log(`Warrior melee attack hit ${attackResult} enemies`);
+                    break;
+                
+                case 'Archer':
+                case 'Arqueiro':
+                    // Ranged attack - fire arrow projectile
+                    attackResult = this.projectileManager.fireProjectile(
+                        position,
+                        this.attackDirection,
+                        'arrow'
+                    );
+                    console.log("Archer fired arrow");
+                    break;
+                
+                case 'Mage':
+                case 'Mago':
+                    // Magic attack - fire magic projectile
+                    attackResult = this.projectileManager.fireProjectile(
+                        position,
+                        this.attackDirection,
+                        'magic'
+                    );
+                    console.log("Mage fired magic projectile");
+                    break;
+            }
+        } else {
+            console.warn("Projectile manager not initialized");
+        }
+        
+        // Reset attack cooldown after delay
+        setTimeout(() => {
+            this.canAttack = true;
+        }, this.attackCooldown);
+    }
+    
+    // Method to get active enemies (to be set from game.js)
+    setActiveEnemiesGetter(callback) {
+        this.getActiveEnemies = callback;
+    }
+    
     checkMobileMode() {
         // Detect if the device is mobile or use force flag for testing
         this.isMobile = this.forceMobile || detectMobileDevice();
@@ -203,6 +334,7 @@ export class Player {
         const touchInstructions = document.getElementById('touch-instructions');
         const leftJoystick = document.getElementById('joystick-left');
         const rightJoystick = document.getElementById('joystick-right');
+        const attackButton = document.getElementById('attack-button');
         
         if (touchInstructions) {
             touchInstructions.style.display = show ? 'block' : 'none';
@@ -214,6 +346,10 @@ export class Player {
         
         if (rightJoystick) {
             rightJoystick.style.display = show ? 'block' : 'none';
+        }
+        
+        if (attackButton) {
+            attackButton.style.display = show ? 'block' : 'none';
         }
     }
     
@@ -309,6 +445,17 @@ export class Player {
             });
             
             console.log("Right joystick for camera rotation initialized");
+        }
+        
+        // Setup attack button
+        const attackButton = document.getElementById('attack-button');
+        if (attackButton) {
+            // Remove any existing event listeners
+            attackButton.removeEventListener('touchstart', this.onAttackButtonPressed.bind(this));
+            
+            // Add new event listener
+            attackButton.addEventListener('touchstart', this.onAttackButtonPressed.bind(this));
+            console.log("Mobile attack button initialized");
         }
     }
     

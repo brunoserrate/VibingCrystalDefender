@@ -7,6 +7,7 @@ import { settings } from '../config/settings.js';
 import { Renderer } from './renderer.js';
 import { Player } from './player.js';
 import { EnemyManager } from './enemy.js';
+import { ProjectileManager } from './projectile.js';
 import { languageManager } from './language.js';
 import { debugLog } from '../utils/helpers.js';
 
@@ -20,6 +21,7 @@ export class VibingCrystalDefender {
         this.renderer = new Renderer();
         this.player = null;
         this.enemyManager = null;
+        this.projectileManager = null;
         
         // Animation
         this.clock = new THREE.Clock();
@@ -96,12 +98,28 @@ export class VibingCrystalDefender {
         // Get the crystal from the renderer
         const crystal = this.renderer.getCrystal();
         
-        // Initialize player with scene components
+        // Initialize projectile manager
+        this.projectileManager = new ProjectileManager(scene);
+        
+        // Initialize player with scene components and projectile manager
         this.player = new Player(camera, scene);
         this.player.initialize();
+        this.player.setProjectileManager(this.projectileManager);
         
         // Initialize enemy manager with crystal reference
         this.enemyManager = new EnemyManager(scene, crystal);
+        
+        // Setup enemy defeated callback for projectiles
+        this.projectileManager.onEnemyDefeated = (enemy) => {
+            if (this.enemyManager && typeof this.enemyManager.deactivateEnemy === 'function') {
+                this.enemyManager.deactivateEnemy(enemy);
+            }
+        };
+        
+        // Connect the enemy manager with the player for targeting
+        this.player.setActiveEnemiesCallback(() => {
+            return this.enemyManager ? this.enemyManager.getActiveEnemies() : [];
+        });
         
         // Setup game over callback
         this.renderer.onGameOver = () => this.handleGameOver();
@@ -283,6 +301,11 @@ export class VibingCrystalDefender {
         if (this.enemyManager) {
             this.spawnEnemiesIfNeeded();
             this.enemyManager.updateEnemies(delta, this.currentGameTime);
+        }
+        
+        // Update projectiles
+        if (this.projectileManager && this.enemyManager) {
+            this.projectileManager.update(delta, this.currentGameTime, this.enemyManager.getActiveEnemies());
         }
         
         // Render the scene

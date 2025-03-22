@@ -283,43 +283,39 @@
 ## Step 8: Player Attacks with Projectiles
 
 **Completed Tasks:**
+
+- Created a ProjectileManager class to handle all projectile-related functionality:
+  - Implemented projectile creation, movement, and collision detection
+  - Created a pooling system for efficient projectile management
+  - Added support for different projectile types based on player class
 - Implemented class-specific attack mechanics:
-  - Warrior: Close-range melee attacks with a 3-unit radius damage area
-  - Archer: Fast-firing arrow projectiles with longer range
-  - Mage: Slower but powerful magic projectiles with area damage
-- Created a ProjectileManager class for handling all projectile-related functionality:
-  - Implemented object pooling for efficient projectile management
-  - Added methods to spawn, update, and deactivate projectiles
-  - Set up collision detection between projectiles and enemies
-- Added attack controls:
-  - Desktop: Left mouse click for primary attack
-  - Mobile: Attack button on the right side of the screen
-- Implemented class-specific visual effects:
-  - Warrior: Melee swing animation with particle effects
-  - Archer: Arrow projectiles with trailing effect
-  - Mage: Glowing magic projectiles with impact explosion
-- Balanced attack properties with configurable settings:
-  - Attack range and damage based on character class
-  - Cooldown periods between attacks
-  - Projectile speed and lifetime
-- Created enemy health system:
-  - Added HP tracking for enemies
-  - Implemented damage calculation based on attack type
-  - Set up enemy destruction when health reaches zero
-- Added audio feedback for attacks and enemy destruction
-- Implemented score system for defeating enemies
+  - Warrior: Melee attacks with a 3-unit radius in front of the player
+  - Archer: Fast arrow projectiles with medium damage
+  - Mage: Powerful magical projectiles with higher damage but slower speed
+- Added collision detection between projectiles/attacks and enemies:
+  - Distance-based collision detection
+  - Proper health reduction for enemies
+  - Enemy deactivation when health reaches zero
+- Integrated attacks with both desktop and mobile controls:
+  - Mouse clicks for desktop attacks
+  - Added a mobile attack button in the UI for touch devices
+- Added attack cooldown system to balance gameplay:
+  - Class-specific cooldown periods
+  - Visual feedback when attacks are available
+- Integrated ProjectileManager with the EnemyManager:
+  - Added getActiveEnemies() method to EnemyManager
+  - Ensured the ProjectileManager can access active enemies for collision checks
 
 **Next Steps:**
 - Proceed to Step 9: Wave System
-- Implement progressive waves of enemies
-- Add difficulty scaling with increasing waves
-- Create wave announcements and transition periods
+- Implement timed enemy waves with increasing difficulty
+- Add wave counter and progression system
+- Create wave completion logic
 
 **Notes:**
-- Each class offers a unique gameplay experience with different attack patterns
-- The projectile system uses object pooling for optimal performance
-- Collision detection uses raycasting for accurate hit detection
-- Visual and audio feedback enhances the player experience
-- Attack properties are balanced to make each class viable but distinct
-- The system is fully integrated with the modular architecture
-- Mobile controls are optimized for touch-based gameplay
+- The projectile system uses object pooling for better performance
+- Different player classes now have distinct attack mechanics and balancing
+- Collision detection works consistently across all attack types
+- The mobile attack button is positioned for easy access on touch devices
+- Projectiles despawn after hitting enemies or reaching maximum lifetime
+- All components follow the modular architecture with clear class responsibilities

@@ -55,7 +55,15 @@ export class EnemyManager {
         debugLog(`Enemy pool created with ${poolSize} enemies`);
     }
     
-    spawnEnemy(spawnPoint) {
+    /**
+     * Returns array of currently active enemies
+     * Used by the player's targeting system and projectile manager
+     */
+    getActiveEnemies() {
+        return this.activeEnemies;
+    }
+    
+    spawnRandomEnemy() {
         // Get an inactive enemy from the pool
         const enemy = this.getInactiveEnemy();
         
@@ -65,7 +73,9 @@ export class EnemyManager {
         }
         
         // Position the enemy at the chosen spawn point
-        const position = this.spawnPoints[spawnPoint];
+        const spawnPoints = Object.keys(this.spawnPoints);
+        const randomSpawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+        const position = this.spawnPoints[randomSpawnPoint];
         enemy.position.set(position.x, position.y, position.z);
         
         // Activate the enemy
@@ -77,7 +87,7 @@ export class EnemyManager {
         // Add to active enemies list
         this.activeEnemies.push(enemy);
         
-        debugLog(`Enemy spawned at ${spawnPoint} (${position.x}, ${position.y}, ${position.z})`);
+        debugLog(`Enemy spawned at ${randomSpawnPoint} (${position.x}, ${position.y}, ${position.z})`);
         return enemy;
     }
     
@@ -142,14 +152,5 @@ export class EnemyManager {
         if (this.crystal && typeof this.crystal.takeDamage === 'function') {
             this.crystal.takeDamage(settings.enemies.attackDamage);
         }
-    }
-    
-    spawnRandomEnemy() {
-        // Get a random spawn point
-        const spawnPoints = Object.keys(this.spawnPoints);
-        const randomSpawnPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
-        
-        // Spawn an enemy at that point
-        return this.spawnEnemy(randomSpawnPoint);
     }
 }
