@@ -4,7 +4,7 @@
  */
 
 import { settings } from '../config/settings.js';
-import { handleResize, createColorMaterial } from '../utils/helpers.js';
+import { handleResize, createColorMaterial, debugLog } from '../utils/helpers.js';
 
 export class Renderer {
     constructor() {
@@ -19,6 +19,17 @@ export class Renderer {
         // Crystal
         this.crystal = null;
         this.crystalLight = null;
+        this.crystalHealth = settings.crystal.health;
+        this.crystalMaxHealth = settings.crystal.health;
+        this.isDamageAnimationPlaying = false;
+        this.damageAnimationStartTime = 0;
+        this.damageAnimationDuration = 300; // milliseconds
+        this.crystalOriginalColor = 0x88CCFF; // Light blue
+        this.crystalDamageColor = 0xFF4444; // Red for damage feedback
+        
+        // Game state
+        this.isGameOver = false;
+        this.onGameOver = null; // Callback when game is over
     }
     
     initialize() {
@@ -110,11 +121,11 @@ export class Renderer {
     
     createCrystal() {
         // Create a sphere geometry for the crystal
-        const geometry = new THREE.SphereGeometry(2, 32, 32);
+        const geometry = new THREE.SphereGeometry(settings.crystal.radius, 32, 32);
         
         // Create a material for the crystal with slight transparency and shininess
         const material = new THREE.MeshPhongMaterial({
-            color: 0x88CCFF, // Light blue
+            color: this.crystalOriginalColor, // Light blue
             transparent: true,
             opacity: 0.8,
             shininess: 90,
@@ -125,7 +136,20 @@ export class Renderer {
         this.crystal = new THREE.Mesh(geometry, material);
         
         // Position the crystal at the center of the arena
-        this.crystal.position.set(0, 2, 0); // x=0, y=2, z=0
+        this.crystal.position.copy(new THREE.Vector3(
+            settings.crystal.position.x,
+            settings.crystal.position.y,
+            settings.crystal.position.z
+        ));
+        
+        // Add health system to crystal
+        this.crystal.userData = {
+            health: this.crystalHealth,
+            maxHealth: this.crystalMaxHealth
+        };
+        
+        // Add the takeDamage method to the crystal
+        this.crystal.takeDamage = (damage) => this.takeDamage(damage);
         
         // Add crystal to the scene
         this.scene.add(this.crystal);
@@ -135,7 +159,7 @@ export class Renderer {
         this.crystalLight.position.set(0, 3, 0); // Slightly above the crystal
         this.scene.add(this.crystalLight);
         
-        console.log("Crystal created and positioned at the center with highlighting light");
+        console.log("Crystal created with health system and positioned at the center with highlighting light");
     }
     
     setupLighting() {
@@ -151,12 +175,83 @@ export class Renderer {
         console.log("Lighting setup complete");
     }
     
-    render() {
+    takeDamage(damage) {
+        // Reduce crystal health
+        this.crystalHealth -= damage;
+        this.crystal.userData.health = this.crystalHealth;
+        
+        // Update crystal health in UI if it exists
+        const crystalHealthElement = document.getElementById('crystal-health');
+        if (crystalHealthElement) {
+            const healthPercentage = Math.max(0, Math.floor((this.crystalHealth / this.crystalMaxHealth) * 100));
+            crystalHealthElement.textContent = `${healthPercentage}%`;
+            
+            // Update health bar if it exists
+            const healthBar = document.getElementById('crystal-health-bar');
+            if (healthBar) {
+                healthBar.style.width = `${healthPercentage}%`;
+            }
+        }
+        
+        // Play damage animation if feature is enabled
+        if (settings.crystal.blinkOnDamage && !this.isDamageAnimationPlaying) {
+            this.playDamageAnimation();
+        }
+        
+        // Log damage
+        debugLog(`Crystal took ${damage} damage! Health remaining: ${this.crystalHealth}`);
+        
+        // Check if crystal is destroyed
+        if (this.crystalHealth <= 0 && !this.isGameOver) {
+            this.crystalHealth = 0;
+            this.gameOver();
+        }
+    }
+    
+    playDamageAnimation() {
+        this.isDamageAnimationPlaying = true;
+        this.damageAnimationStartTime = Date.now();
+        
+        // Change crystal color to damage color
+        this.crystal.material.color.setHex(this.crystalDamageColor);
+    }
+    
+    updateDamageAnimation() {
+        if (!this.isDamageAnimationPlaying) return;
+        
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - this.damageAnimationStartTime;
+        
+        if (elapsedTime >= this.damageAnimationDuration) {
+            // Animation finished, revert to original color
+            this.crystal.material.color.setHex(this.crystalOriginalColor);
+            this.isDamageAnimationPlaying = false;
+        }
+    }
+    
+    gameOver() {
+        this.isGameOver = true;
+        debugLog("Crystal destroyed! Game Over!");
+        
+        // Call game over callback if defined
+        if (typeof this.onGameOver === 'function') {
+            this.onGameOver();
+        }
+    }
+    
+    render(currentTime) {
         // Rotate the crystal slowly for a vibrant effect
         if (this.crystal) {
             this.crystal.rotation.y += 0.005;
         }
         
+        // Update damage animation if playing
+        this.updateDamageAnimation();
+        
         this.renderer.render(this.scene, this.camera);
+    }
+    
+    getCrystal() {
+        return this.crystal;
     }
 }

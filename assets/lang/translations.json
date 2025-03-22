@@ -9,7 +9,11 @@
       "mode": "Mode",
       "screen": "Screen",
       "mobile": "Mobile",
-      "desktop": "Desktop"
+      "desktop": "Desktop",
+      "crystal_health": "Crystal Health",
+      "game_over": "Game Over",
+      "crystal_destroyed": "The crystal has been destroyed!",
+      "restart": "Restart Game"
     },
     "menu": {
       "title": "Vibing Crystal Defender",
@@ -88,7 +92,11 @@
       "mode": "Modo",
       "screen": "Tela",
       "mobile": "Móvel",
-      "desktop": "Desktop"
+      "desktop": "Desktop",
+      "crystal_health": "Vida do Cristal",
+      "game_over": "Fim de Jogo",
+      "crystal_destroyed": "O cristal foi destruído!",
+      "restart": "Reiniciar Jogo"
     },
     "menu": {
       "title": "Vibing Crystal Defender",

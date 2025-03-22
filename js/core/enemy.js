@@ -1,14 +1,15 @@
 /**
  * Enemy component
- * Handles enemy pooling, spawning, and movement
+ * Handles enemy pooling, spawning, movement and crystal attack
  */
 
 import { settings } from '../config/settings.js';
 import { debugLog } from '../utils/helpers.js';
 
 export class EnemyManager {
-    constructor(scene) {
+    constructor(scene, crystal) {
         this.scene = scene;
+        this.crystal = crystal;
         this.enemyPool = [];
         this.activeEnemies = [];
         this.spawnPoints = {
@@ -38,7 +39,9 @@ export class EnemyManager {
             enemy.userData = {
                 isActive: false,
                 speed: settings.enemies.speed,
-                health: settings.enemies.health
+                health: settings.enemies.health,
+                isAttackingCrystal: false,
+                lastAttackTime: 0
             };
             
             // Initially hide the enemy
@@ -67,6 +70,8 @@ export class EnemyManager {
         
         // Activate the enemy
         enemy.userData.isActive = true;
+        enemy.userData.isAttackingCrystal = false;
+        enemy.userData.lastAttackTime = 0;
         enemy.visible = true;
         
         // Add to active enemies list
@@ -84,6 +89,7 @@ export class EnemyManager {
     deactivateEnemy(enemy) {
         // Reset enemy state to inactive
         enemy.userData.isActive = false;
+        enemy.userData.isAttackingCrystal = false;
         enemy.visible = false;
         
         // Remove from active enemies list
@@ -93,19 +99,49 @@ export class EnemyManager {
         }
     }
     
-    updateEnemies(delta) {
-        // Move all active enemies toward the crystal (center position)
-        const crystalPosition = new THREE.Vector3(0, 2, 0);
+    updateEnemies(delta, currentTime) {
+        // Move all active enemies toward the crystal or have them attack if close enough
+        const crystalPosition = new THREE.Vector3(
+            settings.crystal.position.x, 
+            settings.crystal.position.y, 
+            settings.crystal.position.z
+        );
         
         this.activeEnemies.forEach(enemy => {
-            // Calculate direction vector to the crystal
-            const direction = new THREE.Vector3();
-            direction.subVectors(crystalPosition, enemy.position).normalize();
+            // Calculate distance to crystal
+            const distanceToCrystal = enemy.position.distanceTo(crystalPosition);
             
-            // Move enemy in that direction
-            const speed = enemy.userData.speed * delta;
-            enemy.position.add(direction.multiplyScalar(speed));
+            // Check if enemy is within attack range of crystal
+            if (distanceToCrystal <= settings.enemies.attackRange) {
+                // If enemy wasn't already attacking crystal, log it
+                if (!enemy.userData.isAttackingCrystal) {
+                    enemy.userData.isAttackingCrystal = true;
+                    debugLog("Enemy reached crystal and started attacking");
+                }
+                
+                // Attack the crystal once per second
+                if (currentTime - enemy.userData.lastAttackTime >= 1000) {
+                    this.attackCrystal(enemy);
+                    enemy.userData.lastAttackTime = currentTime;
+                }
+            } else if (!enemy.userData.isAttackingCrystal) {
+                // Only move if not attacking crystal
+                // Calculate direction vector to the crystal
+                const direction = new THREE.Vector3();
+                direction.subVectors(crystalPosition, enemy.position).normalize();
+                
+                // Move enemy in that direction
+                const speed = enemy.userData.speed * delta;
+                enemy.position.add(direction.multiplyScalar(speed));
+            }
         });
+    }
+    
+    attackCrystal(enemy) {
+        // Deal damage to the crystal
+        if (this.crystal && typeof this.crystal.takeDamage === 'function') {
+            this.crystal.takeDamage(settings.enemies.attackDamage);
+        }
     }
     
     spawnRandomEnemy() {

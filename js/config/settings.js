@@ -62,6 +62,16 @@ export const settings = {
     poolSize: 20,  // Maximum number of enemies in the pool
     speed: 2,      // Base movement speed
     health: 100,   // Base health points
-    spawnDelay: 5  // Time in seconds between spawns during testing
+    spawnDelay: 5, // Time in seconds between spawns during testing
+    attackDamage: 1, // Damage dealt per second to crystal
+    attackRange: 3 // Distance at which enemies start attacking the crystal
+  },
+  
+  // Crystal settings
+  crystal: {
+    health: 100,    // Initial crystal health
+    radius: 2,      // Crystal radius for collision detection
+    blinkOnDamage: true, // Visual feedback when damaged
+    position: { x: 0, y: 2, z: 0 } // Central position
   }
 };
