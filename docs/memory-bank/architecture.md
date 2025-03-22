@@ -242,6 +242,16 @@ Centralizes game configuration:
     - Shows when crystal is destroyed
     - Provides restart option
     - Displays failure message
+  - Enemy health bars:
+    - Dynamically created for each active enemy
+    - Follow enemies in 3D space with screen projection
+    - Show health percentage with color coding
+    - Scale with distance for better visibility
+    - Update in real-time when enemies take damage
+  - Wave information display:
+    - Current wave number
+    - Enemy count (defeated/total)
+    - Next wave countdown timer
 
 ### 5. Wave System
 - Manages enemy spawning in discrete waves
@@ -331,6 +341,46 @@ handleGameOver() {
   this.isGameRunning = false;
 }
 ```
+
+### Enemy Health Bar System
+```javascript
+// 3D to 2D position projection in enemy.js
+projectPositionToScreen(position) {
+  if (!this.camera) return { x: 0, y: 0 };
+  
+  // Clone the position to avoid modifying the original
+  const pos = position.clone();
+  
+  // Project the 3D position to normalized device coordinates
+  pos.project(this.camera);
+  
+  // Convert to screen coordinates
+  return {
+    x: (pos.x * 0.5 + 0.5) * window.innerWidth,
+    y: (-pos.y * 0.5 + 0.5) * window.innerHeight
+  };
+}
+
+// Health bar update logic
+updateHealthBarValue(enemy) {
+  // Calculate health percentage
+  const healthPercent = (enemy.userData.health / enemy.userData.maxHealth) * 100;
+  
+  // Update width of health bar
+  healthBarElements.bar.style.width = `${healthPercent}%`;
+  
+  // Update color based on health percentage
+  if (healthPercent > 60) {
+    healthBarElements.bar.style.backgroundColor = '#4CAF50'; // Green
+  } else if (healthPercent > 30) {
+    healthBarElements.bar.style.backgroundColor = '#FFC107'; // Yellow
+  } else {
+    healthBarElements.bar.style.backgroundColor = '#F44336'; // Red
+  }
+}
+```
+
+The health bar system creates HTML elements for each enemy, positions them based on the 3D world coordinates projected to screen space, and updates them in real-time as enemies move or take damage. This creates a seamless connection between the 3D game world and the 2D interface.
 
 ## Future Architecture
 
