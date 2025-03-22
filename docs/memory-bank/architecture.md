@@ -52,6 +52,7 @@ class VibingCrystalDefender {
 - Handles window resizing
 - Controls lighting and visual effects
 - Manages game environment (floor, grid, skybox)
+- Creates and maintains the central crystal with highlighting effects
 
 ```javascript
 class Renderer {
@@ -61,6 +62,7 @@ class Renderer {
     setupCamera()
     setupRenderer()
     createFloor()
+    createCrystal()
     setupLighting()
     render()
 }
@@ -156,12 +158,24 @@ Centralizes game configuration:
 - No build process required
 - CDN-based deployment
 
+## Implemented Systems
+
+### 1. Crystal System
+- Central game element that players must defend
+- Implemented as a semi-transparent, glowing sphere
+- Features:
+  - Located at the center of the arena (0, 2, 0)
+  - Slow rotation animation for visual appeal
+  - Custom material with transparency and shininess
+  - Dedicated point light source for highlighting
+  - Will track health and status in future implementations
+
 ## Future Architecture
 
 ### Planned Components
-1. Crystal System
-   - Health management
-   - Visual effects
+1. ~~Crystal System~~ (Implemented)
+   - ~~Visual representation~~ 
+   - Health management (Coming next)
    - Damage handling
 
 2. Enemy System

@@ -15,6 +15,10 @@ export class Renderer {
         
         // Floor and skybox
         this.floor = null;
+        
+        // Crystal
+        this.crystal = null;
+        this.crystalLight = null;
     }
     
     initialize() {
@@ -22,6 +26,7 @@ export class Renderer {
         this.setupCamera();
         this.setupRenderer();
         this.createFloor();
+        this.createCrystal();
         this.setupLighting();
         
         // Handle window resize
@@ -103,6 +108,36 @@ export class Renderer {
         console.log("Floor and grid created and added to scene");
     }
     
+    createCrystal() {
+        // Create a sphere geometry for the crystal
+        const geometry = new THREE.SphereGeometry(2, 32, 32);
+        
+        // Create a material for the crystal with slight transparency and shininess
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x88CCFF, // Light blue
+            transparent: true,
+            opacity: 0.8,
+            shininess: 90,
+            specular: 0xFFFFFF
+        });
+        
+        // Create the crystal mesh
+        this.crystal = new THREE.Mesh(geometry, material);
+        
+        // Position the crystal at the center of the arena
+        this.crystal.position.set(0, 2, 0); // x=0, y=2, z=0
+        
+        // Add crystal to the scene
+        this.scene.add(this.crystal);
+        
+        // Add a point light near the crystal to highlight it
+        this.crystalLight = new THREE.PointLight(0xAAFFFF, 1, 10);
+        this.crystalLight.position.set(0, 3, 0); // Slightly above the crystal
+        this.scene.add(this.crystalLight);
+        
+        console.log("Crystal created and positioned at the center with highlighting light");
+    }
+    
     setupLighting() {
         // Add ambient light
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -117,6 +152,11 @@ export class Renderer {
     }
     
     render() {
+        // Rotate the crystal slowly for a vibrant effect
+        if (this.crystal) {
+            this.crystal.rotation.y += 0.005;
+        }
+        
         this.renderer.render(this.scene, this.camera);
     }
 }
