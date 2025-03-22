@@ -75,6 +75,7 @@
         "cost": "Cost"
       },
       "enemies": {
+        "defeated": "Enemies",
         "basic": "Basic Enemy",
         "fast": "Fast Enemy",
         "tank": "Tank Enemy",
@@ -158,6 +159,7 @@
         "cost": "Custo"
       },
       "enemies": {
+        "defeated": "Inimigos",
         "basic": "Inimigo Básico",
         "fast": "Inimigo Rápido",
         "tank": "Inimigo Tanque",

@@ -243,6 +243,16 @@ Centralizes game configuration:
     - Provides restart option
     - Displays failure message
 
+### 5. Wave System
+- Manages enemy spawning in discrete waves
+- Components:
+  - **Wave Tracking:** Manages current wave number and progress
+  - **Enemy Counting:** Tracks spawned and defeated enemies per wave
+  - **Dynamic Difficulty:** Increases enemy count each wave
+  - **Wave Timing:** Controls delays between waves with countdown
+  - **UI Display:** Shows current wave, enemy count, and next wave timer
+  - **Directional Spawning:** Spawns enemies from all four cardinal directions
+
 ## Implementation Details
 
 ### Crystal Health System

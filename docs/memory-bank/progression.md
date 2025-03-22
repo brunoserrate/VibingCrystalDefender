@@ -319,3 +319,33 @@
 - The mobile attack button is positioned for easy access on touch devices
 - Projectiles despawn after hitting enemies or reaching maximum lifetime
 - All components follow the modular architecture with clear class responsibilities
+
+## Step 9: Wave System Implementation
+
+**Completed Tasks:**
+- Implemented a wave-based enemy spawning system:
+  - Added wave tracking with configurable delays between waves
+  - Created escalating difficulty with increasing enemies per wave
+  - Implemented wave completion detection when all enemies are defeated
+- Added wave-related UI elements:
+  - Wave counter display
+  - Enemy count (defeated vs. total)
+  - Next wave countdown timer
+- Connected enemy defeats to the wave progression system
+- Configured the first wave to start with fewer enemies (4 total)
+- Added a pause between waves with countdown display
+- Improved enemy spawning to use all four cardinal directions
+- Changed some configurations values to balance the game
+
+**Next Steps:**
+- Proceed to Step 10: Interface Enhancements
+- Add more detailed UI elements for game status
+- Implement enemy health bars
+- Add score tracking
+
+**Notes:**
+- The wave system creates defined waves of enemies rather than continuous spawning
+- Each wave has a specific number of enemies that increases with wave number
+- Players get a brief break between waves to prepare
+- UI elements provide clear feedback on current wave progress
+- First wave has 4 enemies (1 from each direction) and each subsequent wave adds 2 more enemies
