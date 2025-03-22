@@ -117,6 +117,14 @@ export class VibingCrystalDefender {
 
         // Initialize enemy manager with crystal reference
         this.enemyManager = new EnemyManager(scene, crystal);
+        
+        // Connect camera to enemy manager for UI positioning
+        this.enemyManager.setCamera(camera);
+        
+        // Store enemyManager reference on each enemy for health bar updates
+        this.enemyManager.enemyPool.forEach(enemy => {
+            enemy.enemyManager = this.enemyManager;
+        });
 
         // Setup enemy defeated callback for projectiles
         this.projectileManager.onEnemyDefeated = (enemy) => {

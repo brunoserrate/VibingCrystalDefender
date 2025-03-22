@@ -349,3 +349,41 @@
 - Players get a brief break between waves to prepare
 - UI elements provide clear feedback on current wave progress
 - First wave has 4 enemies (1 from each direction) and each subsequent wave adds 2 more enemies
+
+## Step 10: Interface Basic with Life Bars
+
+**Completed Tasks:**
+- Enhanced the Game UI for crystal health and wave information:
+  - Added styling to improve the existing health bar and wave counter display
+  - Applied background colors and borders for better visibility
+  - Added transitions for smoother health updates
+- Implemented dynamic enemy health bars:
+  - Created a system to project 3D enemy positions to 2D screen coordinates
+  - Added health bars above each enemy's head that follow them in the 3D space
+  - Implemented scaling based on distance from camera
+  - Designed color changes based on enemy health percentage (green → yellow → red)
+- Created a comprehensive health bar management system:
+  - Automatic creation of health bars when enemies spawn
+  - Proper cleanup when enemies are deactivated
+  - Real-time position updates as enemies move
+  - Health bar value updates when enemies take damage
+- Connected the health bar system with projectile damage:
+  - Updated the ProjectileManager to use enemy damage method
+  - Improved collision detection to update health bars
+  - Ensured all damage types (projectile and melee) update health bars
+
+**Next Steps:**
+- Focus on enhancing the game experience with additional features:
+  - Different enemy types with unique visuals and behaviors
+  - Enhanced visual effects for attacks and damage
+  - Score tracking and end-game statistics
+  - Audio feedback for game events
+
+**Notes:**
+- The health bar system uses absolute positioning within a fixed container
+- Health bars have color transitions based on enemy health (green → yellow → red)
+- 3D to 2D projection ensures health bars stay above the appropriate enemies
+- Scale-with-distance effect makes health bars more readable at various distances
+- The UI components now have consistent styling with semi-transparent backgrounds
+- Health updates now have smooth transitions using CSS transitions
+- The system handles rapid creation and deletion of many health bar elements efficiently

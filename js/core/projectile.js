@@ -133,17 +133,33 @@ export class ProjectileManager {
 
                     // If collision detected
                     if (distance < 1.0) { // Assuming enemy size is around 1 unit
-                        // Enemy takes damage
-                        enemy.userData.health -= projectile.userData.damage;
-
-                        // If enemy health <= 0, deactivate it
-                        if (enemy.userData.health <= 0) {
-                            enemy.userData.isActive = false;
-                            enemy.visible = false;
-
-                            // If enemy manager has a deactivateEnemy method, call it
-                            if (typeof this.onEnemyDefeated === 'function') {
+                        // Use enemyManager's damage method if available
+                        let enemyDefeated = false;
+                        
+                        if (typeof this.onEnemyDefeated === 'function') {
+                            // Use enemy manager's damage method that updates health bars
+                            enemyDefeated = enemy.userData.health - projectile.userData.damage <= 0;
+                            
+                            if (enemyDefeated) {
+                                enemy.userData.isActive = false;
+                                enemy.visible = false;
                                 this.onEnemyDefeated(enemy);
+                            } else {
+                                // Update health value and health bar
+                                if (enemy.enemyManager && typeof enemy.enemyManager.enemyTakeDamage === 'function') {
+                                    enemy.enemyManager.enemyTakeDamage(enemy, projectile.userData.damage);
+                                } else {
+                                    enemy.userData.health -= projectile.userData.damage;
+                                }
+                            }
+                        } else {
+                            // Fall back to direct damage
+                            enemy.userData.health -= projectile.userData.damage;
+                            enemyDefeated = enemy.userData.health <= 0;
+                            
+                            if (enemyDefeated) {
+                                enemy.userData.isActive = false;
+                                enemy.visible = false;
                             }
                         }
 
@@ -172,11 +188,19 @@ export class ProjectileManager {
 
                 // If enemy within melee range
                 if (distance < radius) {
-                    // Enemy takes damage
-                    enemy.userData.health -= 40; // Melee deals more damage
+                    let enemyDefeated = false;
+                    
+                    // Use enemyManager's damage method if available
+                    if (enemy.enemyManager && typeof enemy.enemyManager.enemyTakeDamage === 'function') {
+                        enemyDefeated = enemy.enemyManager.enemyTakeDamage(enemy, 40);
+                    } else {
+                        // Fall back to direct damage
+                        enemy.userData.health -= 40; // Melee deals more damage
+                        enemyDefeated = enemy.userData.health <= 0;
+                    }
 
                     // If enemy health <= 0, deactivate it
-                    if (enemy.userData.health <= 0) {
+                    if (enemyDefeated) {
                         enemy.userData.isActive = false;
                         enemy.visible = false;
 
