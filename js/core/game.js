@@ -6,6 +6,7 @@
 import { settings } from '../config/settings.js';
 import { Renderer } from './renderer.js';
 import { Player } from './player.js';
+import { EnemyManager } from './enemy.js';
 import { languageManager } from './language.js';
 import { debugLog } from '../utils/helpers.js';
 
@@ -17,6 +18,7 @@ export class VibingCrystalDefender {
         // Components
         this.renderer = new Renderer();
         this.player = null;
+        this.enemyManager = null;
         
         // Animation
         this.clock = new THREE.Clock();
@@ -27,6 +29,9 @@ export class VibingCrystalDefender {
         
         // Character selection
         this.playerClass = null;
+        
+        // Enemy spawning timer
+        this.lastEnemySpawnTime = 0;
         
         // Initialize character selection menu
         this.setupCharacterSelection();
@@ -88,16 +93,38 @@ export class VibingCrystalDefender {
         this.player = new Player(camera, scene);
         this.player.initialize();
         
+        // Initialize enemy manager
+        this.enemyManager = new EnemyManager(scene);
+        
         // Set player class
         if (this.playerClass) {
             this.player.setPlayerClass(this.playerClass);
         }
+        
+        // Reset the clock for accurate timing
+        this.clock.start();
+        this.lastEnemySpawnTime = 0;
         
         // Start the game loop
         this.isGameRunning = true;
         requestAnimationFrame(this.animate);
         
         console.log("Game initialized successfully");
+    }
+    
+    spawnEnemiesIfNeeded() {
+        // Check if it's time to spawn a new enemy based on spawn delay setting
+        const currentTime = this.clock.getElapsedTime();
+        
+        if (currentTime - this.lastEnemySpawnTime > settings.enemies.spawnDelay) {
+            // Spawn a random enemy
+            const enemy = this.enemyManager.spawnRandomEnemy();
+            
+            if (enemy) {
+                this.lastEnemySpawnTime = currentTime;
+                debugLog(`Enemy spawned at ${currentTime.toFixed(2)}s`);
+            }
+        }
     }
     
     animate() {
@@ -112,6 +139,12 @@ export class VibingCrystalDefender {
         // Update player movement
         if (this.player) {
             this.player.updateMovement(delta);
+        }
+        
+        // Spawn and update enemies
+        if (this.enemyManager) {
+            this.spawnEnemiesIfNeeded();
+            this.enemyManager.updateEnemies(delta);
         }
         
         // Render the scene

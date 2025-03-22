@@ -18,7 +18,8 @@ VibingCrystalDefender/
 │   │   ├── game.js          # Main game manager
 │   │   ├── renderer.js      # Three.js scene management
 │   │   ├── player.js        # Player controls and mechanics
-│   │   └── language.js      # Internationalization system
+│   │   ├── language.js      # Internationalization system
+│   │   └── enemy.js         # Enemy management
 │   ├── config/      # Configuration files
 │   │   └── settings.js      # Game settings and constants
 │   └── utils/       # Utility functions
@@ -100,6 +101,24 @@ class LanguageManager {
 }
 ```
 
+### 5. Enemy Manager (`enemy.js`)
+- Manages enemy pooling, spawning, and movement
+- Controls enemy behavior and lifecycle
+- Handles spawn points and enemy activation
+- Directs enemies toward the crystal
+
+```javascript
+class EnemyManager {
+    constructor()
+    initializeEnemyPool()
+    spawnEnemy()
+    getInactiveEnemy()
+    deactivateEnemy()
+    updateEnemies()
+    spawnRandomEnemy()
+}
+```
+
 ## Configuration System
 
 ### Settings (`settings.js`)
@@ -170,6 +189,18 @@ Centralizes game configuration:
   - Dedicated point light source for highlighting
   - Will track health and status in future implementations
 
+### 2. Enemy System
+- Handles spawning and movement of enemies toward the crystal
+- Implemented using an object pooling design pattern for performance
+- Features:
+  - Configurable pool size (default: 20 enemies)
+  - Four cardinal spawn points at arena boundaries
+  - Direct movement toward the crystal
+  - Automatic spawning at timed intervals
+  - Simple red cube representation (placeholder)
+  - Configurable movement speed and health values
+  - Integrated with the main game loop
+
 ## Future Architecture
 
 ### Planned Components
@@ -178,10 +209,10 @@ Centralizes game configuration:
    - Health management (Coming next)
    - Damage handling
 
-2. Enemy System
-   - Different enemy types
-   - Wave management
-   - Pathfinding
+2. Enemy System (Implemented)
+   - ~~Different enemy types~~ (Basic enemies implemented)
+   - ~~Wave management~~ (Basic timed spawning implemented)
+   - ~~Pathfinding~~ (Direct movement implemented)
 
 3. Tower System
    - Building mechanics

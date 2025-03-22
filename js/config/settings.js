@@ -53,7 +53,15 @@ export const settings = {
   
   // Language settings
   language: {
-    default: 'pt-br',
+    default: 'en',
     available: ['pt-br', 'en']
+  },
+  
+  // Enemy settings
+  enemies: {
+    poolSize: 20,  // Maximum number of enemies in the pool
+    speed: 2,      // Base movement speed
+    health: 100,   // Base health points
+    spawnDelay: 5  // Time in seconds between spawns during testing
   }
 };
