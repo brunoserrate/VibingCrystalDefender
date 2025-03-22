@@ -1,67 +1,185 @@
 # Vibing Crystal Defender - Architecture Documentation
 
-## Project Structure
+## Project Overview
+Vibing Crystal Defender is a Tower Defense FPS game built with Three.js, featuring both desktop and mobile support. The game combines first-person shooter mechanics with tower defense strategy, where players must protect a central crystal from waves of enemies.
 
+## Directory Structure
 ```
 VibingCrystalDefender/
-├── index.html                # Main HTML file with game container
+├── assets/
+│   ├── models/      # 3D models
+│   ├── textures/    # Game textures
+│   ├── sounds/      # Audio files
+│   └── images/      # UI and misc images
 ├── css/
-│   └── style.css             # Basic styling for the game
+│   └── style.css    # Game styles
 ├── js/
-│   └── game.js               # Main game logic
-├── assets/                   # Will contain game assets (models, textures, sounds)
-└── docs/                     # Documentation
-    └── memory-bank/          # Project documentation files
+│   ├── core/        # Core game components
+│   │   ├── game.js          # Main game manager
+│   │   ├── renderer.js      # Three.js scene management
+│   │   ├── player.js        # Player controls and mechanics
+│   │   └── language.js      # Internationalization system
+│   ├── config/      # Configuration files
+│   │   └── settings.js      # Game settings and constants
+│   └── utils/       # Utility functions
+│       └── helpers.js       # Helper functions
+├── docs/
+│   └── memory-bank/  # Documentation
+├── index.html        # Main entry point
+└── README.md         # Project documentation
 ```
 
-## Technologies Used
+## Core Components
 
-As specified in the Tech Stack document:
+### 1. Game Manager (`game.js`)
+- Central controller for game state and systems
+- Manages game initialization and loop
+- Coordinates between different components
+- Handles character selection and game states
 
-1. **Three.js** - For 3D rendering
-   - Loaded via CDN: `https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js`
-   - Will be used for creating the 3D world, models, and camera
+```javascript
+class VibingCrystalDefender {
+    constructor()
+    initialize()
+    startGame()
+    setupCharacterSelection()
+    animate()
+}
+```
 
-2. **JavaScript** - Pure JavaScript for game logic
-   - No additional frameworks to keep the project lightweight
-   - Organized in a class-based structure for maintainability
+### 2. Renderer (`renderer.js`)
+- Manages Three.js scene, camera, and renderer
+- Handles window resizing
+- Controls lighting and visual effects
+- Manages game environment (floor, grid, skybox)
 
-3. **Nipple.js** - For virtual joystick
-   - Loaded via CDN: `https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.8.6/nipplejs.min.js`
-   - Will be used for handling touch controls on mobile devices
+```javascript
+class Renderer {
+    constructor()
+    initialize()
+    setupScene()
+    setupCamera()
+    setupRenderer()
+    createFloor()
+    setupLighting()
+    render()
+}
+```
 
-## Component Architecture
+### 3. Player Controller (`player.js`)
+- Handles player movement and controls
+- Manages character classes and abilities
+- Implements both desktop and mobile controls
+- Controls camera perspective and collision
 
-The game follows this high-level component structure:
+```javascript
+class Player {
+    constructor()
+    initialize()
+    setupControls()
+    setupMobileControls()
+    updateMovement()
+    setPlayerClass()
+}
+```
 
-1. **Game Manager** (`game.js` - VibingCrystalDefender class)
-   - Initializes the game environment
-   - Manages game states (menu, playing, game over)
-   - Orchestrates other components
+### 4. Language System (`language.js`)
+- Manages game translations
+- Handles language switching
+- Provides translation utilities
+- Supports multiple languages (PT-BR, EN)
 
-2. **Renderer Component** (Implemented in `game.js`)
-   - Handles Three.js scene setup
-   - Camera configuration
-   - Rendering loop with requestAnimationFrame
-   - Responsive design with window resize handling
+```javascript
+class LanguageManager {
+    constructor()
+    setLanguage()
+    translate()
+    updateUI()
+}
+```
 
-3. **Player Component** (Implemented in `game.js`)
-   - Manages player movement
-   - Handles player inputs
-   - Processes player actions
+## Configuration System
 
-4. **Enemy System** (To be implemented)
-   - Will handle enemy spawning
-   - Enemy movement
-   - Enemy-crystal interactions
+### Settings (`settings.js`)
+Centralizes game configuration:
+- Renderer settings
+- Player properties
+- Arena dimensions
+- Camera parameters
+- Game states
+- CDN URLs
 
-5. **Crystal Component** (To be implemented)
-   - Will manage crystal state
-   - Handle crystal health
-   - Process crystal effects
+## Utility Functions (`helpers.js`)
+- Window resize handling
+- Mobile device detection
+- Debug logging
+- Material creation helpers
 
-6. **UI Component** (To be implemented)
-   - Will create and update user interface elements
-   - Display player stats and game information
+## Control Systems
 
-This architecture follows a component-based approach, allowing for modularity and easier maintenance as the project grows.
+### Desktop Controls
+- WASD/Arrow keys for movement
+- Mouse for camera rotation
+- Pointer lock for FPS view
+- Keyboard shortcuts for actions
+
+### Mobile Controls
+- Dual virtual joysticks
+  - Left: Movement control
+  - Right: Camera rotation
+- Touch-friendly UI
+- Responsive design adaptations
+- Automatic control switching
+
+## User Interface
+
+### Character Selection
+- Three playable classes
+  - Warrior (Melee combat)
+  - Archer (Ranged attacks)
+  - Mage (Area spells)
+- Visual class selection
+- Start game button
+- Language selection
+
+### Game UI
+- Health indicators
+- Resource counters
+- Tower building interface
+- Mobile control overlays
+- Touch instructions
+
+## Dependencies
+- Three.js: 3D rendering
+- PointerLockControls: Camera control
+- Nipple.js: Mobile joysticks
+- No build process required
+- CDN-based deployment
+
+## Future Architecture
+
+### Planned Components
+1. Crystal System
+   - Health management
+   - Visual effects
+   - Damage handling
+
+2. Enemy System
+   - Different enemy types
+   - Wave management
+   - Pathfinding
+
+3. Tower System
+   - Building mechanics
+   - Upgrade system
+   - Different tower types
+
+4. Combat System
+   - Damage calculation
+   - Projectile management
+   - Collision detection
+
+5. Resource System
+   - Currency management
+   - Resource collection
+   - Economy balance

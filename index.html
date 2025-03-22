@@ -7,31 +7,63 @@
     <title>Vibing Crystal Defender</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/svg+xml" href="assets/images/crystal-favicon.svg">
-</head>
-
-<body>
-    <div id="game-container"></div>
-    <div id="loading-screen">Loading...</div>
     
-    <!-- Mobile control areas -->
-    <div id="joystick-left" class="joystick-zone"></div>
-    <div id="joystick-right" class="joystick-zone"></div>
-    
-    <!-- Mobile touch instructions -->
-    <div id="touch-instructions">
-        Touch and drag on screen to look around<br>
-        Toque e arraste na tela para olhar ao redor
-    </div>
-
     <!-- Include Three.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <!-- Include PointerLockControls from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/PointerLockControls.js"></script>
     <!-- Include Nipple.js for mobile controls -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
+</head>
 
-    <!-- Game scripts -->
-    <script src="js/game.js"></script>
+<body>
+    <!-- Language toggle -->
+    <div id="language-toggle" class="language-control">
+        <button data-lang="en">EN</button>
+        <button data-lang="pt-br" class="active">PT</button>
+    </div>
+
+    <!-- Character selection menu -->
+    <div id="character-selection" class="menu-screen">
+        <div class="menu-content">
+            <h1 data-i18n="menu.title">Vibing Crystal Defender</h1>
+            <h2 data-i18n="menu.subtitle">Escolha seu Personagem</h2>
+            <div class="character-options">
+                <div class="character-card" data-class="Warrior">
+                    <div class="character-icon warrior-icon">⚔️</div>
+                    <h3 data-i18n="menu.characterSelection.warrior.name">Guerreiro</h3>
+                    <p data-i18n="menu.characterSelection.warrior.description">Alto dano corpo a corpo, maior resistência</p>
+                </div>
+                <div class="character-card" data-class="Archer">
+                    <div class="character-icon archer-icon">🏹</div>
+                    <h3 data-i18n="menu.characterSelection.archer.name">Arqueiro</h3>
+                    <p data-i18n="menu.characterSelection.archer.description">Ataques rápidos à distância, alta mobilidade</p>
+                </div>
+                <div class="character-card" data-class="Mage">
+                    <div class="character-icon mage-icon">🧙</div>
+                    <h3 data-i18n="menu.characterSelection.mage.name">Mago</h3>
+                    <p data-i18n="menu.characterSelection.mage.description">Poderosos ataques mágicos em área</p>
+                </div>
+            </div>
+            <button id="start-game-btn" disabled data-i18n="menu.startButton">Iniciar Jogo</button>
+        </div>
+    </div>
+
+    <div id="game-container"></div>
+    <div id="loading-screen" data-i18n="ui.loading">Loading...</div>
+    
+    <!-- Mobile control areas -->
+    <div id="joystick-left" class="joystick-zone"></div>
+    <div id="joystick-right" class="joystick-zone"></div>
+    
+    <!-- Mobile touch instructions -->
+    <div id="touch-instructions" data-i18n="ui.touchInstructions">
+        Touch and drag on screen to look around<br>
+        Toque e arraste na tela para olhar ao redor
+    </div>
+
+    <!-- Game scripts - Using ES modules -->
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>
