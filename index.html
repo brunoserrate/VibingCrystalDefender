@@ -7,6 +7,13 @@
     <title>Vibing Crystal Defender</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/svg+xml" href="assets/images/crystal-favicon.svg">
+    
+    <!-- Include Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Include PointerLockControls from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/PointerLockControls.js"></script>
+    <!-- Include Nipple.js for mobile controls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
 </head>
 
 <body>
@@ -55,15 +62,8 @@
         Toque e arraste na tela para olhar ao redor
     </div>
 
-    <!-- Include Three.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <!-- Include PointerLockControls from CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/PointerLockControls.js"></script>
-    <!-- Include Nipple.js for mobile controls -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.10.0/nipplejs.min.js"></script>
-
-    <!-- Game scripts -->
-    <script src="js/game.js"></script>
+    <!-- Game scripts - Using ES modules -->
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

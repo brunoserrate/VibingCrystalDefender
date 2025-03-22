@@ -140,6 +140,69 @@ body {
     opacity: 0.7;
 }
 
+/* Mobile Controls */
+.joystick-zone {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 75px;
+    z-index: 1000;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    display: none; /* Hidden by default, shown only on mobile */
+}
+
+#joystick-left {
+    bottom: 50px;
+    left: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#joystick-right {
+    bottom: 50px;
+    right: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#touch-instructions {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 14px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    display: none; /* Initially hidden, will be shown by JS */
+    z-index: 1000;
+}
+
+/* When the browser is in landscape orientation on mobile devices */
+@media (max-width: 900px) and (orientation: landscape) {
+    .joystick-zone {
+        width: 100px;
+        height: 100px;
+        bottom: 30px;
+        border-radius: 50px;
+    }
+    
+    #joystick-left {
+        left: 30px;
+    }
+    
+    #joystick-right {
+        right: 30px;
+    }
+    
+    #touch-instructions {
+        font-size: 12px;
+        padding: 5px;
+    }
+}
+
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
     .character-options {
@@ -168,71 +231,6 @@ body {
     color: white;
     font-size: 24px;
     font-family: Arial, sans-serif;
-}
-
-/* Mobile joystick zones */
-.joystick-zone {
-    display: none; /* Hidden by default, shown only on mobile */
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    bottom: 50px;
-    z-index: 1000;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    touch-action: none; /* Prevent browser default touch actions */
-}
-
-/* Left joystick for movement */
-#joystick-left {
-    left: 50px;
-}
-
-/* Right joystick for camera rotation - now hidden and unused */
-#joystick-right {
-    right: 50px;
-    display: none; /* Always hidden as we're using touch instead */
-}
-
-/* Touch instructions for mobile users */
-#touch-instructions {
-    display: none;
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    border-radius: 5px;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    text-align: center;
-    z-index: 1000;
-}
-
-/* Show instructions on mobile */
-@media (max-width: 900px) {
-    #touch-instructions {
-        display: block;
-    }
-}
-
-/* When the browser is in landscape orientation on mobile devices */
-@media (max-width: 900px) and (orientation: landscape) {
-    .joystick-zone {
-        width: 100px;
-        height: 100px;
-        bottom: 30px;
-    }
-    
-    #joystick-left {
-        left: 30px;
-    }
-    
-    #joystick-right {
-        right: 30px;
-    }
 }
 
 /* Debug controls and panel */

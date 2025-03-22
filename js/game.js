@@ -1,3 +1,14 @@
+/*
+ * Old game.js
+ * 
+ * This file is no longer used. All game logic has been moved to core/game.js
+ * And the rest was refactored
+ * 
+ * This file is only here for reference
+ * 
+ * @deprecated
+*/
+
 // Check if Three.js is loaded correctly
 console.log("Checking Three.js:", typeof THREE !== 'undefined' ? "Loaded successfully" : "Failed to load");
 

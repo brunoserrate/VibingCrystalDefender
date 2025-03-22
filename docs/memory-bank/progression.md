@@ -138,3 +138,36 @@
 - Language selection is persisted during gameplay
 - System includes mapping for character class names between languages
 - All user-facing text now comes from the translation system for easier localization
+
+## Step 4.2: Code Refactoring and Mobile Controls Enhancement
+
+**Completed Tasks:**
+- Refactored the monolithic game.js into modular components:
+  - core/game.js: Main game manager
+  - core/renderer.js: Three.js scene management
+  - core/player.js: Player controls and mechanics
+  - core/language.js: Internationalization system
+  - config/settings.js: Game configuration
+  - utils/helpers.js: Utility functions
+- Reimplemented mobile controls with dual joysticks:
+  - Left joystick for movement
+  - Right joystick for camera rotation
+- Enhanced mobile device detection with multiple criteria
+- Improved mobile UI visibility and positioning
+- Added responsive design for landscape mode
+- Implemented automatic control switching based on device/orientation
+
+**Next Steps:**
+- Proceed to Step 5: Crystal Implementation
+- Create the central crystal that needs to be defended
+- Implement crystal health system
+- Add visual feedback for crystal status
+
+**Notes:**
+- Project now follows a modular architecture for better maintainability
+- Mobile controls provide a more intuitive experience with two joysticks
+- Settings are now centralized in a dedicated configuration file
+- Helper functions are organized in a separate utility module
+- All components use ES6 modules for better code organization
+- Mobile UI automatically adapts to device and orientation changes
+- Debug tools are available for testing mobile controls
