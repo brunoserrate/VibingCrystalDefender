@@ -236,3 +236,46 @@
 - Enemies ignore collisions with the player as specified in the plan
 - The spawning system uses delta time for consistent timing regardless of frame rate
 - Enemy properties (speed, health) are defined in a centralized settings file
+
+## Step 7: Collision Detection with Crystal and Continuous Attack
+
+**Completed Tasks:**
+- Implemented collision detection between enemies and the crystal:
+  - Used distance-based calculations to detect when enemies reach the crystal
+  - Configured attack range threshold through settings (3 units by default)
+- Created a crystal health system:
+  - Added crystal health tracking with configurable initial value (100 HP)
+  - Implemented visual damage feedback with temporary color change on hit
+  - Added a takeDamage() method to handle incoming damage
+- Implemented continuous enemy attacks:
+  - Enemies stop moving when they reach the crystal
+  - Enemies deal damage at a consistent rate (1 damage per second)
+  - Enemies remain attacking until they are destroyed
+- Added a game over system:
+  - Detects when crystal health reaches zero
+  - Displays a game over screen with restart option
+  - Provides visual and textual feedback about game end state
+- Created a crystal health UI:
+  - Added a health bar with percentage display
+  - Implemented smooth transitions for health changes
+  - Ensured visibility in both desktop and mobile modes
+- Enhanced the enemy manager:
+  - Added tracking of enemy attack state
+  - Ensured proper timing of attacks using the game clock
+  - Improved enemy state management with the object pool
+
+**Next Steps:**
+- Proceed to Step 8: Player Attacks with Projectiles
+- Implement class-specific attack mechanics
+- Create projectile system for archer and mage
+- Add collision detection between attacks and enemies
+- Implement enemy destruction
+
+**Notes:**
+- The collision system uses a simple distance calculation (enemy.position.distanceTo(crystalPosition))
+- Attack timing is handled with millisecond precision for consistent damage rate
+- The crystal provides visual feedback by briefly turning red when damaged
+- Health UI updates in real-time to show the current crystal status
+- Enemies switch state from "moving" to "attacking" when reaching the crystal
+- Game over screen offers a restart button to reload the game
+- All systems follow the modular architecture pattern with clear separation of concerns
