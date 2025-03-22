@@ -387,3 +387,33 @@
 - The UI components now have consistent styling with semi-transparent backgrounds
 - Health updates now have smooth transitions using CSS transitions
 - The system handles rapid creation and deletion of many health bar elements efficiently
+
+## Step 10.1: Movement System Refactoring
+
+**Completed Tasks:**
+- Refactored player movement to be camera-relative rather than world-relative:
+  - Modified movement calculations to use camera direction as the reference
+  - Created forward and right vectors based on camera orientation
+  - Applied movement relative to these vectors for both keyboard and joystick controls
+- Enhanced mobile controls to move in the direction the camera is facing:
+  - Forward joystick movement now always moves in the direction the player is looking
+  - Lateral joystick movement is perpendicular to the camera direction
+- Maintained consistent arena boundary enforcement
+- Improved movement intuition for players:
+  - Pressing W now always moves in the direction the camera is looking
+  - Pressing A/D now always moves perpendicular to the viewing direction
+- Ensured consistent behavior across both desktop and mobile controls
+- Added code documentation for the movement system
+
+**Next Steps:**
+- Continue enhancing game experience with additional features:
+  - Different enemy types with unique behaviors
+  - Improved visual effects for combat
+  - Audio feedback system
+
+**Notes:**
+- The new movement system creates a more intuitive control scheme for players
+- Moving forward with W or joystick now matches player expectation by moving in the camera's direction
+- Camera-relative movement makes navigating the arena more natural
+- The refactored code maintains the same boundary constraints (-50 to 50 on x and z)
+- Movement calculations use normalized vectors to ensure consistent speed in all directions

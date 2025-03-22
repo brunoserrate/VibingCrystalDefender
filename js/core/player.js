@@ -16,6 +16,7 @@ export class Player {
         // Player state
         this.playerClass = null;
         this.velocity = new THREE.Vector3();
+        this.speed = this.isMobile ? settings.player.mobileSpeed : settings.player.speed;
 
         // Movement flags
         this.moveForward = false;
@@ -325,8 +326,12 @@ export class Player {
 
     checkMobileMode() {
         // Detect if the device is mobile or use force flag for testing
+        const wasMobile = this.isMobile;
         this.isMobile = this.forceMobile || detectMobileDevice();
         console.log(`Device detected as: ${this.isMobile ? 'Mobile' : 'Desktop'}`);
+
+        // Update speed based on device type
+        this.speed = this.isMobile ? settings.player.mobileSpeed : settings.player.speed;
     }
 
     showMobileUI(show) {
@@ -478,87 +483,81 @@ export class Player {
     }
 
     updateMovement(delta) {
-        const speed = settings.player.speed;
-        const boundary = settings.arena.boundary;
+        // Skip if controls are locked
+        if (!this.controls || !this.controls.isLocked) return;
+
+        // Calculate movement based on camera orientation
+        const cameraDirection = new THREE.Vector3();
+        this.camera.getWorldDirection(cameraDirection);
+
+        // Get the forward vector (camera direction projected onto XZ plane)
+        const forwardVector = new THREE.Vector3(
+            cameraDirection.x,
+            0,
+            cameraDirection.z
+        ).normalize();
+
+        // Get the right vector (perpendicular to forward vector in XZ plane)
+        const rightVector = new THREE.Vector3(
+            forwardVector.z,
+            0,
+            -forwardVector.x
+        ).normalize();
 
         // Reset velocity
         this.velocity.x = 0;
         this.velocity.z = 0;
 
-        if (this.isMobile) {
-            // Mobile controls - Use joystick for movement
-            if (Math.abs(this.joystickMovement.x) > settings.player.joystickDeadZone ||
-                Math.abs(this.joystickMovement.y) > settings.player.joystickDeadZone) {
-
-                // Get the camera's direction
-                const cameraDirection = new THREE.Vector3();
-                this.camera.getWorldDirection(cameraDirection);
-                cameraDirection.y = 0; // Keep movement on the xz plane
-                cameraDirection.normalize();
-
-                // Get the right vector perpendicular to the camera direction
-                const right = new THREE.Vector3();
-                right.crossVectors(this.camera.up, cameraDirection).normalize();
-
-                // Apply joystick movement relative to camera orientation
-                this.velocity.addScaledVector(right, this.joystickMovement.x * settings.player.mobileSpeed);
-                this.velocity.addScaledVector(cameraDirection, this.joystickMovement.y * settings.player.mobileSpeed);
-            }
-
-            // Apply camera rotation from right joystick
-            if (this.cameraRotation.x !== 0 || this.cameraRotation.y !== 0) {
-                // Create rotation quaternions for X and Y axes
-                const rotationX = new THREE.Quaternion().setFromAxisAngle(
-                    new THREE.Vector3(1, 0, 0),
-                    this.cameraRotation.x
-                );
-
-                const rotationY = new THREE.Quaternion().setFromAxisAngle(
-                    new THREE.Vector3(0, 1, 0),
-                    this.cameraRotation.y
-                );
-
-                // Apply rotations to camera
-                this.camera.quaternion.multiply(rotationY);
-                this.camera.quaternion.multiply(rotationX);
-            }
-        } else {
-            // Desktop controls - Use WASD for movement
-            const direction = new THREE.Vector3();
-
-            // Determine movement direction from key states
-            if (this.moveForward) direction.z = -1;
-            if (this.moveBackward) direction.z = 1;
-            if (this.moveLeft) direction.x = -1;
-            if (this.moveRight) direction.x = 1;
-
-            // Normalize for consistent speed in all directions
-            if (direction.length() > 0) {
-                direction.normalize();
-            }
-
-            // Apply movement based on camera orientation
-            if (direction.x !== 0) {
-                this.velocity.x = direction.x * speed;
-            }
-            if (direction.z !== 0) {
-                this.velocity.z = direction.z * speed;
-            }
+        // Apply direction based on keys pressed
+        if (this.moveForward) {
+            this.velocity.add(forwardVector.clone().multiplyScalar(this.speed));
+        }
+        if (this.moveBackward) {
+            this.velocity.add(forwardVector.clone().multiplyScalar(-this.speed));
+        }
+        if (this.moveRight) {
+            this.velocity.add(rightVector.clone().multiplyScalar(-this.speed));
+        }
+        if (this.moveLeft) {
+            this.velocity.add(rightVector.clone().multiplyScalar(this.speed));
         }
 
-        // Get current position
-        const position = this.controls.getObject().position;
+        // Apply joystick input if available
+        if (this.joystickData && (this.joystickData.x !== 0 || this.joystickData.y !== 0)) {
+            // Convert joystick data to movement vector
+            const joystickForward = forwardVector.clone().multiplyScalar(-this.joystickData.y * this.speed);
+            const joystickRight = rightVector.clone().multiplyScalar(this.joystickData.x * this.speed);
 
-        // Calculate new position
-        const newX = position.x + this.velocity.x;
-        const newZ = position.z + this.velocity.z;
+            // Add joystick movement
+            this.velocity.add(joystickForward);
+            this.velocity.add(joystickRight);
+        }
 
-        // Apply arena boundaries
-        if (newX > -boundary && newX < boundary) {
-            position.x = newX;
-        }
-        if (newZ > -boundary && newZ < boundary) {
-            position.z = newZ;
-        }
+        // Update the camera position with delta time
+        this.camera.position.x += this.velocity.x * delta;
+        this.camera.position.z += this.velocity.z * delta;
+
+        // Check and enforce arena boundaries
+        const arenaSize = settings.arena.size;
+        if (this.camera.position.x < -arenaSize) this.camera.position.x = -arenaSize;
+        if (this.camera.position.x > arenaSize) this.camera.position.x = arenaSize;
+        if (this.camera.position.z < -arenaSize) this.camera.position.z = -arenaSize;
+        if (this.camera.position.z > arenaSize) this.camera.position.z = arenaSize;
+    }
+
+    handleJoystickMove(event, nipple) {
+        if (!nipple || !nipple.vector) return;
+
+        // Store joystick data for use in updateMovement
+        const vector = nipple.vector;
+        this.joystickData = {
+            x: vector.x / 50, // Normalize joystick values
+            y: vector.y / 50
+        };
+    }
+
+    handleJoystickEnd() {
+        // Reset joystick data when released
+        this.joystickData = { x: 0, y: 0 };
     }
 }

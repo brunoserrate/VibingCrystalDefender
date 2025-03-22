@@ -263,6 +263,49 @@ Centralizes game configuration:
   - **UI Display:** Shows current wave, enemy count, and next wave timer
   - **Directional Spawning:** Spawns enemies from all four cardinal directions
 
+### Player Movement System
+- Manages player movement using camera-relative coordinates
+- Components:
+  - **Directional Vectors:** Calculates forward and right vectors based on camera orientation
+  - **Input Mapping:** Maps WASD/Arrow keys and joystick input to these vectors
+  - **Velocity Application:** Applies combined movement with delta-time for smooth motion
+  - **Boundary Enforcement:** Ensures player stays within the arena boundaries
+- Implementation:
+  - Desktop: WASD/Arrow keys trigger direction flags processed in the update loop
+  - Mobile: Joystick input directly affects velocity calculation
+  - All movement is based on camera orientation rather than world axes
+
+```javascript
+// Camera-relative movement calculation
+updateMovement(delta) {
+  // Get camera direction and calculate perpendicular vectors
+  const cameraDirection = new THREE.Vector3();
+  this.camera.getWorldDirection(cameraDirection);
+  
+  // Project onto XZ plane for movement
+  const forwardVector = new THREE.Vector3(
+    cameraDirection.x, 
+    0, 
+    cameraDirection.z
+  ).normalize();
+  
+  // Calculate right vector (perpendicular to forward)
+  const rightVector = new THREE.Vector3(
+    forwardVector.z,
+    0,
+    -forwardVector.x
+  ).normalize();
+  
+  // Apply input to these vectors for movement
+  if (this.moveForward) {
+    this.velocity.add(forwardVector.clone().multiplyScalar(this.speed));
+  }
+  // Additional movement logic...
+}
+```
+
+The movement system now uses the camera's orientation as the reference point for all movement, making controls more intuitive and consistent between desktop and mobile platforms. This creates a more natural control scheme where "forward" always means "the direction the player is looking."
+
 ## Implementation Details
 
 ### Crystal Health System

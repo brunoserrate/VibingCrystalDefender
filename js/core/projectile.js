@@ -30,8 +30,8 @@ export class ProjectileManager {
                 type: 'arrow',
                 active: false,
                 velocity: new THREE.Vector3(),
-                speed: 3.5,
-                damage: 20,
+                speed: 7.5,
+                damage: 30,
                 lifeTime: 3000, // milliseconds
                 spawnTime: 0
             };
@@ -51,8 +51,8 @@ export class ProjectileManager {
                 type: 'magic',
                 active: false,
                 velocity: new THREE.Vector3(),
-                speed: 2.5,
-                damage: 30,
+                speed: 6,
+                damage: 40,
                 lifeTime: 3500, // milliseconds
                 spawnTime: 0
             };
@@ -135,11 +135,11 @@ export class ProjectileManager {
                     if (distance < 1.0) { // Assuming enemy size is around 1 unit
                         // Use enemyManager's damage method if available
                         let enemyDefeated = false;
-                        
+
                         if (typeof this.onEnemyDefeated === 'function') {
                             // Use enemy manager's damage method that updates health bars
                             enemyDefeated = enemy.userData.health - projectile.userData.damage <= 0;
-                            
+
                             if (enemyDefeated) {
                                 enemy.userData.isActive = false;
                                 enemy.visible = false;
@@ -156,7 +156,7 @@ export class ProjectileManager {
                             // Fall back to direct damage
                             enemy.userData.health -= projectile.userData.damage;
                             enemyDefeated = enemy.userData.health <= 0;
-                            
+
                             if (enemyDefeated) {
                                 enemy.userData.isActive = false;
                                 enemy.visible = false;
@@ -189,13 +189,13 @@ export class ProjectileManager {
                 // If enemy within melee range
                 if (distance < radius) {
                     let enemyDefeated = false;
-                    
+
                     // Use enemyManager's damage method if available
                     if (enemy.enemyManager && typeof enemy.enemyManager.enemyTakeDamage === 'function') {
-                        enemyDefeated = enemy.enemyManager.enemyTakeDamage(enemy, 40);
+                        enemyDefeated = enemy.enemyManager.enemyTakeDamage(enemy, 60);
                     } else {
                         // Fall back to direct damage
-                        enemy.userData.health -= 40; // Melee deals more damage
+                        enemy.userData.health -= 60; // Melee deals more damage
                         enemyDefeated = enemy.userData.health <= 0;
                     }
 

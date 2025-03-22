@@ -14,9 +14,9 @@ export const settings = {
 
   // Player settings
   player: {
-    height: 1.8,
-    speed: 0.15,
-    mobileSpeed: 0.08,
+    height: 2,
+    speed: 7,
+    mobileSpeed: 6,
     mobileTouchSensitivity: 0.003,
     joystickDeadZone: 0.1,
     mobileLookSensitivity: 0.03
@@ -79,7 +79,7 @@ export const settings = {
   waves: {
     initialDelay: 10,         // Seconds before first wave starts
     delayBetweenWaves: 15,    // Seconds between waves
-    enemiesFirstWave: 4,      // Enemies in the first wave (1 per direction)
+    enemiesFirstWave: 1,      // Enemies in the first wave (1 per direction)
     enemyIncreasePerWave: 2,  // Additional enemies per wave
     maxEnemiesPerSpawn: 4,    // Maximum enemies to spawn at once (1 per direction)
     showCountdown: true       // Show countdown between waves
