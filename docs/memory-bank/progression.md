@@ -279,3 +279,47 @@
 - Enemies switch state from "moving" to "attacking" when reaching the crystal
 - Game over screen offers a restart button to reload the game
 - All systems follow the modular architecture pattern with clear separation of concerns
+
+## Step 8: Player Attacks with Projectiles
+
+**Completed Tasks:**
+- Implemented class-specific attack mechanics:
+  - Warrior: Close-range melee attacks with a 3-unit radius damage area
+  - Archer: Fast-firing arrow projectiles with longer range
+  - Mage: Slower but powerful magic projectiles with area damage
+- Created a ProjectileManager class for handling all projectile-related functionality:
+  - Implemented object pooling for efficient projectile management
+  - Added methods to spawn, update, and deactivate projectiles
+  - Set up collision detection between projectiles and enemies
+- Added attack controls:
+  - Desktop: Left mouse click for primary attack
+  - Mobile: Attack button on the right side of the screen
+- Implemented class-specific visual effects:
+  - Warrior: Melee swing animation with particle effects
+  - Archer: Arrow projectiles with trailing effect
+  - Mage: Glowing magic projectiles with impact explosion
+- Balanced attack properties with configurable settings:
+  - Attack range and damage based on character class
+  - Cooldown periods between attacks
+  - Projectile speed and lifetime
+- Created enemy health system:
+  - Added HP tracking for enemies
+  - Implemented damage calculation based on attack type
+  - Set up enemy destruction when health reaches zero
+- Added audio feedback for attacks and enemy destruction
+- Implemented score system for defeating enemies
+
+**Next Steps:**
+- Proceed to Step 9: Wave System
+- Implement progressive waves of enemies
+- Add difficulty scaling with increasing waves
+- Create wave announcements and transition periods
+
+**Notes:**
+- Each class offers a unique gameplay experience with different attack patterns
+- The projectile system uses object pooling for optimal performance
+- Collision detection uses raycasting for accurate hit detection
+- Visual and audio feedback enhances the player experience
+- Attack properties are balanced to make each class viable but distinct
+- The system is fully integrated with the modular architecture
+- Mobile controls are optimized for touch-based gameplay
