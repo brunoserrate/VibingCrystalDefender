@@ -279,3 +279,42 @@
 - Enemies switch state from "moving" to "attacking" when reaching the crystal
 - Game over screen offers a restart button to reload the game
 - All systems follow the modular architecture pattern with clear separation of concerns
+
+## Step 8: Player Attacks with Projectiles
+
+**Completed Tasks:**
+- Created a ProjectileManager class to handle all projectile-related functionality:
+  - Implemented projectile creation, movement, and collision detection
+  - Created a pooling system for efficient projectile management
+  - Added support for different projectile types based on player class
+- Implemented class-specific attack mechanics:
+  - Warrior: Melee attacks with a 3-unit radius in front of the player
+  - Archer: Fast arrow projectiles with medium damage
+  - Mage: Powerful magical projectiles with higher damage but slower speed
+- Added collision detection between projectiles/attacks and enemies:
+  - Distance-based collision detection
+  - Proper health reduction for enemies
+  - Enemy deactivation when health reaches zero
+- Integrated attacks with both desktop and mobile controls:
+  - Mouse clicks for desktop attacks
+  - Added a mobile attack button in the UI for touch devices
+- Added attack cooldown system to balance gameplay:
+  - Class-specific cooldown periods
+  - Visual feedback when attacks are available
+- Integrated ProjectileManager with the EnemyManager:
+  - Added getActiveEnemies() method to EnemyManager
+  - Ensured the ProjectileManager can access active enemies for collision checks
+
+**Next Steps:**
+- Proceed to Step 9: Wave System
+- Implement timed enemy waves with increasing difficulty
+- Add wave counter and progression system
+- Create wave completion logic
+
+**Notes:**
+- The projectile system uses object pooling for better performance
+- Different player classes now have distinct attack mechanics and balancing
+- Collision detection works consistently across all attack types
+- The mobile attack button is positioned for easy access on touch devices
+- Projectiles despawn after hitting enemies or reaching maximum lifetime
+- All components follow the modular architecture with clear class responsibilities
