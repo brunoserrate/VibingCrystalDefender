@@ -19,7 +19,8 @@ VibingCrystalDefender/
 │   │   ├── renderer.js      # Three.js scene management
 │   │   ├── player.js        # Player controls and mechanics
 │   │   ├── language.js      # Internationalization system
-│   │   └── enemy.js         # Enemy management
+│   │   ├── enemy.js         # Enemy management
+│   │   └── projectile.js    # Projectile management
 │   ├── config/      # Configuration files
 │   │   └── settings.js      # Game settings and constants
 │   └── utils/       # Utility functions
@@ -116,6 +117,20 @@ class EnemyManager {
     deactivateEnemy()
     updateEnemies()
     spawnRandomEnemy()
+}
+```
+
+### 6. Projectile Manager (`projectile.js`)
+- Manages projectile creation, movement, and collision
+- Handles projectile types and behaviors
+- Controls projectile spawning and removal
+
+```javascript
+class ProjectileManager {
+    constructor()
+    createProjectile()
+    updateProjectiles()
+    handleCollision()
 }
 ```
 

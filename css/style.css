@@ -166,6 +166,38 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Mobile Attack Button */
+.mobile-control-button {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-color: rgba(255, 50, 50, 0.7);
+    color: white;
+    border-radius: 40px;
+    z-index: 1000;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    display: none; /* Hidden by default, shown only on mobile */
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 80px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+#attack-button {
+    bottom: 100px;
+    right: 200px;
+}
+
+#attack-button:active {
+    background-color: rgba(255, 0, 0, 0.9);
+    transform: scale(0.95);
+}
+
 #touch-instructions {
     position: absolute;
     top: 10px;
@@ -195,6 +227,19 @@ body {
     
     #joystick-right {
         right: 30px;
+    }
+    
+    .mobile-control-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        font-size: 14px;
+        line-height: 60px;
+    }
+    
+    #attack-button {
+        bottom: 80px;
+        right: 150px;
     }
     
     #touch-instructions {
