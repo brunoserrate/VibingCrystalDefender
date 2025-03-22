@@ -200,3 +200,39 @@
 - Crystal rendering is handled efficiently in the game loop
 - The crystal's design suggests it's valuable and needs protection
 - Future versions will add health tracking and damage visualization
+
+## Step 6: Enemy Spawning and Movement with Pooling
+
+**Completed Tasks:**
+- Created an EnemyManager class to handle all enemy-related functionality
+- Implemented an object pooling system for efficient enemy management:
+  - Created a configurable pool of inactive enemies (default: 20)
+  - Added methods to activate and deactivate enemies
+  - Ensured reuse of enemy objects instead of creating new ones
+- Established four cardinal spawn points at the edges of the arena:
+  - North: (0, 1, -50)
+  - South: (0, 1, 50)
+  - East: (50, 1, 0)
+  - West: (-50, 1, 0)
+- Implemented movement logic directing enemies toward the crystal:
+  - Calculated direction vectors to the crystal
+  - Applied movement based on enemy speed and delta time
+- Created a timed spawning system at configurable intervals
+- Set up simple red cube enemies with 2 unit height for visibility
+- Integrated enemy management with the main game loop
+- Changed the default language to English
+
+**Next Steps:**
+- Proceed to Step 7: Collision Detection with Crystal
+- Implement collision detection between enemies and the crystal
+- Create a system for enemies to damage the crystal
+- Develop a health system for the crystal
+- Allow enemies to continue attacking until destroyed
+
+**Notes:**
+- The enemy pooling system prevents unnecessary object creation/destruction
+- Enemies spawn at random cardinal points and move directly toward the crystal
+- Movement speed is configurable via settings
+- Enemies ignore collisions with the player as specified in the plan
+- The spawning system uses delta time for consistent timing regardless of frame rate
+- Enemy properties (speed, health) are defined in a centralized settings file
